@@ -152,7 +152,7 @@ server <- function(input, output, session) {
   })
 
   dataSelected <- server_preview(previewData = previewData)
-  server_statistics_setup(modInput=dataSelected)
+  server_statistics_setup(modInput=dataSelected, previewData=previewData)
   
 }
 
