@@ -159,7 +159,6 @@ server <- function(input, output, session) {
              x > 0
            } 
          )
-         
          if (ncol(nMissing)) {
            nMissing <- nMissing |> 
              dplyr$mutate_all(function(x) {
@@ -174,8 +173,22 @@ server <- function(input, output, session) {
            )
              
          } else {
-           nMissing <- NULL
+           nMissing <- shiny$div()
          }
+         # browser()
+         if ('PARAMCD' %in% colnames(x$data)) {
+           paramcd <- unique(x$data[,'PARAMCD']$PARAMCD)
+           # browser()
+           paramcd <- shiny$div(
+             shiny$h3('PARAMCD'),
+             purrr$map(paramcd, function(x) {
+               shiny$tags$em(paste0(x, " * "))
+             })
+           )
+         } else {
+           paramcd <- shiny$div() 
+         }
+         # browser()
          shiny$wellPanel(
            shiny$h3(glue$glue('Study: {x$study}')),
            shiny$h3(glue$glue('Date: {x$date}')),
@@ -184,6 +197,7 @@ server <- function(input, output, session) {
            purrr$map(column_names, function(x) {
              shiny$tags$em(paste0(x, " * "))
            }),
+           paramcd,
            nMissing
          )
        }
