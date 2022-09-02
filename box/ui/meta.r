@@ -2,14 +2,15 @@
 ui_metadata <- function(id='metadata') {
   box::use(shiny)
   ns <- shiny$NS(id)
-  shiny$div(
+  shiny$inputPanel(
     shiny$checkboxInput(ns('selectAll'), 'Select All', TRUE),
+    shiny$checkboxInput(ns('linkedOnly'), 'Linked Only', TRUE),
     shiny$actionButton(ns('reset'), 'Reset'),
-    shiny$actionButton(ns('go'), 'Go'),
     shiny$uiOutput(ns('study')),
     shiny$uiOutput(ns('year')),
     shiny$uiOutput(ns('month')),
-    shiny$tableOutput(ns('outline'))
+    shiny$uiOutput(ns('analysis')),
+    shiny$actionButton(ns('go'), 'Go')
   )
 }
 
@@ -22,9 +23,14 @@ server_metadata <- function(id='metadata') {
       ns <- session$ns
       
       datafiles <- shiny$reactive({
-        box::use(../cache)
         input$reset
+        box::use(../cache)
         datafiles <- cache$check()
+        if (input$linkedOnly) {
+          datafiles <- datafiles |> 
+            dplyr$filter(!is.na(analysis))
+        }
+        datafiles
       })
       
       output$study <- shiny$renderUI({
@@ -47,28 +53,41 @@ server_metadata <- function(id='metadata') {
       
       output$month <- shiny$renderUI({
         datafiles <- datafiles()
-        month <- datafiles |> 
+        shiny$req(input$year)
+        monthName <- datafiles |> 
           dplyr$filter(study %in% input$study, year %in% input$year) |> 
-          dplyr$pull(month)
-        month <- stats$setNames(month, month.name[month])
-        if (input$selectAll) selected <-  month else selected = NULL
-        shiny$selectizeInput(ns('month'), 'Month', choices=month, selected=selected, multiple=TRUE)
+          dplyr$pull(monthName)
+        
+        if (input$selectAll) selected <-  monthName else selected = NULL
+        shiny$selectizeInput(ns('monthName'), 'Month', choices=monthName, selected=selected, multiple=TRUE)
+      })
+      
+      output$analysis <- shiny$renderUI({
+        shiny$req(input$monthName)
+        datafiles <- datafiles()
+        analysis <- datafiles |> 
+          dplyr$filter(study %in% input$study, year %in% input$year,
+                       monthName %in% input$monthName) |> 
+          dplyr$pull(analysis)
+        
+        shiny$selectizeInput(ns('analysis'), 'Analysis', choices=analysis, selected=analysis, multiple=TRUE)
       })
       
       filteredData <- shiny$eventReactive(
         input$go, {
           datafiles <- datafiles()
+          
           files <- datafiles |> 
-            dplyr$filter(study %in% input$study, year %in% input$year, month %in% input$month) 
+            dplyr$filter(study %in% input$study, 
+                         year %in% input$year, 
+                         monthName %in% input$monthName,
+                         analysis %in% input$analysis) 
           files
         }
       )
       
-      output$outline <- shiny$renderTable({
-        shiny$req(filteredData())
-        filteredData()
-      })
-      
+
+      filteredData
     }
   )
   
