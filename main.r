@@ -1,8 +1,11 @@
 
 ui <- function() {
-   box::use(shiny)
+   box::use(shiny, bslib)
    box::use(./box/ui/meta)
+
+   
    shiny$fluidPage(
+      theme = bslib$bs_theme(version = 5),
      shiny$titlePanel('CSM Management System'),
      shiny$sidebarLayout(shiny$sidebarPanel(width=3,
        shiny$fluidRow(
@@ -175,28 +178,17 @@ server <- function(input, output, session) {
          } else {
            nMissing <- shiny$div()
          }
-         # browser()
+         
          if ('PARAMCD' %in% colnames(x$data)) {
            paramcd <- unique(x$data[,'PARAMCD']$PARAMCD)
-           # browser()
-           paramcd <- shiny$div(
-             shiny$h3('PARAMCD'),
-             purrr$map(paramcd, function(x) {
-               shiny$tags$em(paste0(x, " * "))
-             })
-           )
+           paramcd <- selectizeInput('aeiPARAMCD', 'PARAMCD', paramcd, paramcd, multiple = TRUE)
          } else {
            paramcd <- shiny$div() 
          }
-         # browser()
+         
          shiny$wellPanel(
-           shiny$h3(glue$glue('Study: {x$study}')),
-           shiny$h3(glue$glue('Date: {x$date}')),
-           shiny$h3(glue$glue('Analysis: {x$analysis}')),
-           shiny$h3('Columns'),
-           purrr$map(column_names, function(x) {
-             shiny$tags$em(paste0(x, " * "))
-           }),
+           shiny$h3(glue$glue('{toupper(x$analysis)}')),
+           selectizeInput('aeiColumns', 'Columns', column_names, column_names, multiple = TRUE),
            paramcd,
            nMissing
          )
