@@ -1,93 +1,8 @@
-ui_preview <- function(id = "preview") {
-  box::use(shiny)
-  ns <- NS(id)
-  shiny$uiOutput(ns("previewData"))
-}
-
-server_preview <- function(id = "preview", previewData) {
-  box::use(shiny, dplyr, purrr)
-  shiny$moduleServer(
-    id,
-    function(input, output, session) {
-      ns <- session$ns
-      
-      output$previewData <- shiny$renderUI({
-        req(previewData())
-        dataNames <- previewData()
-        purrr$map(
-          dataNames,
-          function(x) {
-            data <- x$data
-            nrowData <- nrow(data)
-            column_names <- x$column_names
-            analysis <- x$analysis
-            column_names <- column_names[column_names == toupper(column_names)]
-            nMissing <- data |>
-              dplyr$summarise_all(function(x) {
-                sum(is.na(x)) / nrowData
-              })
-            nMissing <-
-              nMissing |>
-              dplyr$select_if(
-                function(x) {
-                  x > 0
-                }
-              )
-            if (ncol(nMissing)) {
-              nMissing <- nMissing |>
-                dplyr$mutate_all(function(x) {
-                  paste0(
-                    round(x, 2), "%"
-                  )
-                })
-              colnames(nMissing) <- paste0(" - ", colnames(nMissing), " - ")
-              nMissing <- shiny$div(
-                shiny$h4("Missing Data"),
-                shiny$div(
-                  class = "d-flex justify-content-center",
-                  htmlTable$htmlTable(nMissing)
-                )
-              )
-            } else {
-              nMissing <- shiny$div()
-            }
-
-            if ("PARAMCD" %in% colnames(x$data)) {
-              paramcd <- unique(x$data[, "PARAMCD"]$PARAMCD)
-              paramcd <- selectizeInput(ns(paste0(analysis, "PARAMCD")),
-                "PARAMCD", paramcd, paramcd,
-                multiple = TRUE
-              )
-            } else {
-              paramcd <- shiny$div()
-            }
-
-            selectId <- paste0(analysis, "columns")
-            shiny$wellPanel(
-              shiny$h4(toupper(analysis), class = "font-weight-bold"),
-              # selectizeInput(
-              #   ns(selectId), "Columns", column_names, column_names, multiple = TRUE
-              # ),
-              paramcd,
-              # statistics,
-              nMissing
-            )
-          }
-        )
-      })
-      
-      
-      out <- shiny$reactive({
-        shiny$reactiveValuesToList(input)
-      })
-      out
-    }
-  )
-}
 
 ui <- function() {
   box::use(shiny, bslib)
   box::use(. / box / ui / meta)
+  box::use(. / box / preview[ui_preview])
 
 
   shiny$fluidPage(
@@ -129,7 +44,8 @@ ui <- function() {
 server <- function(input, output, session) {
   box::use(
     . / box / ui / meta, shiny, dplyr, fs, cli, glue, purrr, readr, haven,
-    htmlTable
+    htmlTable,
+    . / box / preview[server_preview]
   )
   filteredData <- meta$server_metadata()
 
@@ -231,7 +147,7 @@ server <- function(input, output, session) {
 
   dataSelected <- server_preview(previewData = previewData)
   observe({
-    req(dataSelected())
+    shiny$req(dataSelected())
     print(dataSelected())
   })
 }

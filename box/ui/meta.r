@@ -61,7 +61,8 @@ server_metadata <- function(id = "metadata") {
         max_month <- datafiles |>
           dplyr$filter(date == max(date)) |>
           dplyr$pull(monthName)
-        shiny$selectizeInput(ns("monthName"), "Month", choices = monthName, selected = max_month, multiple = TRUE)
+        shiny$selectizeInput(ns("monthName"), "Month", 
+                             choices = monthName, selected = max_month, multiple = FALSE)
       })
 
       output$analysis <- shiny$renderUI({
@@ -74,7 +75,7 @@ server_metadata <- function(id = "metadata") {
           ) |>
           dplyr$pull(analysis)
         development <- getOption("development")
-        if (development) selected <- c("aei", "rgv") else selected <- analysis
+        if (development) selected <- c("aei", "rgv", "rgm", "vitals") else selected <- analysis
         shiny$selectizeInput(ns("analysis"), "Analysis",
           choices = analysis, selected = selected, multiple = TRUE
         )
