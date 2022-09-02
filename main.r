@@ -11,6 +11,7 @@ ui <- function() {
          shiny$column(
             8,
             shiny$inputPanel(
+               shiny$actionButton('deleteDevelopmentFolder', 'Delete Develoment Folder'),
                shiny$actionButton('createDevelopmentFolder', 'Create Develoment Folder')
             ),
             shiny$tableOutput('outline')
@@ -20,8 +21,13 @@ ui <- function() {
 }
 
 server <- function(input, output, session) {
-   box::use(./box/ui/meta, shiny, dplyr, fs)
+   box::use(./box/ui/meta, shiny, dplyr, fs, cli, glue)
    filteredData <- meta$server_metadata()
+   
+   shiny$observeEvent(input$deleteDevelopmentFolder, {
+      fs$dir_delete(getOption('datamisc_cache_path'))
+      shiny$showNotification('Development Data Deleted')
+   })
    
    shiny$observeEvent(input$createDevelopmentFolder, {
       shiny$req(filteredData())
@@ -33,15 +39,18 @@ server <- function(input, output, session) {
          dplyr$mutate(
             local_path = fs$path_join(c(datamisc_cache_path, path))
          ) 
-      
       data <- data |> 
-         dplyr$filter(!fs$file_exists(path))
-         
+         dplyr$filter(!file.exists(local_path))
+      
+      
+      
       if (nrow(data)) {
+         n_files <- length(data$local_path)
+         shiny$showNotification(glue$glue('Copying {n_files} to local project'))
          data <- data |> 
             dplyr$mutate(
                create_dir = fs$dir_create(fs$path_dir(local_path), recurse = T),
-               copied = fs$file_copy(path, local_path, overwrite = FALSE)
+               copied = file.copy(path, local_path, overwrite = FALSE)
             ) |> 
             dplyr$ungroup()
       }
