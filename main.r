@@ -176,7 +176,6 @@ server <- function(input, output, session) {
          } else {
            nMissing <- NULL
          }
-         # browser()
          shiny$wellPanel(
            shiny$h3(glue$glue('Study: {x$study}')),
            shiny$h3(glue$glue('Date: {x$date}')),
