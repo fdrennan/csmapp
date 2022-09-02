@@ -3,6 +3,7 @@ ui <- function() {
   box::use(shiny, bslib)
   box::use(. / box / ui / meta)
   box::use(. / box / preview[ui_preview])
+  box::use(. / box / statistics_setup[ui_statistics_setup])
 
 
   shiny$fluidPage(
@@ -34,6 +35,10 @@ ui <- function() {
           shiny$tabPanel(
             "Preview Data",
             ui_preview()
+          ),
+          shiny$tabPanel(
+            "Splits Setup",
+            ui_statistics_setup()
           )
         )
       )
@@ -45,7 +50,8 @@ server <- function(input, output, session) {
   box::use(
     . / box / ui / meta, shiny, dplyr, fs, cli, glue, purrr, readr, haven,
     htmlTable,
-    . / box / preview[server_preview]
+    . / box / preview[server_preview],
+    . / box / statistics_setup[server_statistics_setup]
   )
   filteredData <- meta$server_metadata()
 
@@ -146,27 +152,8 @@ server <- function(input, output, session) {
   })
 
   dataSelected <- server_preview(previewData = previewData)
-
-  ui_statistics_setup <- function(id = "statistics_setup") {
-    box::use(shiny)
-    ns <- shiny(id)
-    shiny(
-      shiny(ns("ui"))
-    )
-  }
-
-  server_statistics_setup <- function(id = "statistics_setup") {
-    box::use(shiny)
-    shiny$moduleServer(
-      id,
-      function(input, output, session) {
-        ns <- session
-        output <- shiny$renderUI({
-
-        })
-      }
-    )
-  }
+  server_statistics_setup(modInput=dataSelected)
+  
 }
 
 box::use(shiny)
