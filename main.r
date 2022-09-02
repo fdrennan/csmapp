@@ -10,6 +10,7 @@ server_preview <- function(id = "preview", previewData) {
     id,
     function(input, output, session) {
       ns <- session$ns
+      
       output$previewData <- shiny$renderUI({
         req(previewData())
         dataNames <- previewData()
@@ -25,7 +26,6 @@ server_preview <- function(id = "preview", previewData) {
               dplyr$summarise_all(function(x) {
                 sum(is.na(x)) / nrowData
               })
-            browser()
             nMissing <-
               nMissing |>
               dplyr$select_if(
@@ -65,7 +65,9 @@ server_preview <- function(id = "preview", previewData) {
             selectId <- paste0(analysis, "columns")
             shiny$wellPanel(
               shiny$h4(toupper(analysis), class = "font-weight-bold"),
-              selectizeInput(ns(selectId), "Columns", column_names, column_names, multiple = TRUE),
+              # selectizeInput(
+              #   ns(selectId), "Columns", column_names, column_names, multiple = TRUE
+              # ),
               paramcd,
               # statistics,
               nMissing
@@ -73,6 +75,12 @@ server_preview <- function(id = "preview", previewData) {
           }
         )
       })
+      
+      
+      out <- shiny$reactive({
+        shiny$reactiveValuesToList(input)
+      })
+      out
     }
   )
 }
@@ -166,8 +174,9 @@ server <- function(input, output, session) {
         size_hr = as.character(size_hr)
       )
   })
+ 
 
-  dataToAnalyze <- reactive({
+  previewData <- reactive({
     shiny$req(filteredData())
     data <- filteredData() |>
       dplyr$arrange(dplyr$desc(date))
@@ -199,22 +208,16 @@ server <- function(input, output, session) {
               )
             ), duration = 2, closeButton = FALSE)
             study_data <- switch(path_ext_type,
-              "csv" = readr$read_csv(path),
-              "sas7bdat" = haven$read_sas(path)
+                                 "csv" = readr$read_csv(path),
+                                 "sas7bdat" = haven$read_sas(path)
             )
-
+            
             dplyr$bind_cols(data, study_data)
           }
         )
       }
     )
-
-    data
-  })
-
-  previewData <- reactive({
-    shiny$req(dataToAnalyze)
-    data <- dataToAnalyze()
+    
     purrr$map(data, function(x) {
       list(
         study = unique(x$study),
@@ -226,7 +229,11 @@ server <- function(input, output, session) {
     })
   })
 
-  server_preview(previewData = previewData)
+  dataSelected <- server_preview(previewData = previewData)
+  observe({
+    req(dataSelected())
+    print(dataSelected())
+  })
 }
 
 box::use(shiny)
