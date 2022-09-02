@@ -12,7 +12,7 @@ server_preview <- function(id = "preview", previewData) {
     id,
     function(input, output, session) {
       ns <- session$ns
-      
+
       output$previewData <- shiny$renderUI({
         shiny$req(previewData())
         dataNames <- previewData()
@@ -53,22 +53,26 @@ server_preview <- function(id = "preview", previewData) {
             } else {
               nMissing <- shiny$div()
             }
-            
+
             if ("PARAMCD" %in% colnames(x$data)) {
               paramcd <- unique(x$data[, "PARAMCD"]$PARAMCD)
-              paramcd <- shiny$selectizeInput(ns(paste0(analysis, "PARAMCD")),
-                                        "PARAMCD", paramcd, paramcd,
-                                        multiple = TRUE
+              paramcd <- shiny$inputPanel(
+                shiny$selectizeInput(ns(paste0(analysis, "PARAMCD")),
+                  "PARAMCD", paramcd, paramcd,
+                  multiple = TRUE
+                ),
+                shiny$numericInput(ns(paste0(analysis, "splits")), "Splits", 1, min = 0, max = 3, step = 1)
               )
             } else {
               paramcd <- shiny$div()
             }
-            
+
             selectId <- paste0(analysis, "columns")
             shiny$wellPanel(
               shiny$h4(toupper(analysis), class = "font-weight-bold"),
               shiny$selectizeInput(
-                ns(selectId), "Columns", column_names, column_names, multiple = TRUE
+                ns(selectId), "Columns", column_names, column_names,
+                multiple = TRUE
               ),
               paramcd,
               nMissing
@@ -76,12 +80,12 @@ server_preview <- function(id = "preview", previewData) {
           }
         )
       })
-      
-      
+
+
       out <- shiny$reactive({
         shiny$reactiveValuesToList(input)
       })
       out
     }
   )
-} 
+}

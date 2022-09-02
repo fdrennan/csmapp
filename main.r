@@ -90,7 +90,7 @@ server <- function(input, output, session) {
         size_hr = as.character(size_hr)
       )
   })
- 
+
 
   previewData <- reactive({
     shiny$req(filteredData())
@@ -124,16 +124,16 @@ server <- function(input, output, session) {
               )
             ), duration = 2, closeButton = FALSE)
             study_data <- switch(path_ext_type,
-                                 "csv" = readr$read_csv(path),
-                                 "sas7bdat" = haven$read_sas(path)
+              "csv" = readr$read_csv(path),
+              "sas7bdat" = haven$read_sas(path)
             )
-            
+
             dplyr$bind_cols(data, study_data)
           }
         )
       }
     )
-    
+
     purrr$map(data, function(x) {
       list(
         study = unique(x$study),
@@ -146,10 +146,27 @@ server <- function(input, output, session) {
   })
 
   dataSelected <- server_preview(previewData = previewData)
-  observe({
-    shiny$req(dataSelected())
-    print(dataSelected())
-  })
+
+  ui_statistics_setup <- function(id = "statistics_setup") {
+    box::use(shiny)
+    ns <- shiny(id)
+    shiny(
+      shiny(ns("ui"))
+    )
+  }
+
+  server_statistics_setup <- function(id = "statistics_setup") {
+    box::use(shiny)
+    shiny$moduleServer(
+      id,
+      function(input, output, session) {
+        ns <- session
+        output <- shiny$renderUI({
+
+        })
+      }
+    )
+  }
 }
 
 box::use(shiny)

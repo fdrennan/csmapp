@@ -61,8 +61,9 @@ server_metadata <- function(id = "metadata") {
         max_month <- datafiles |>
           dplyr$filter(date == max(date)) |>
           dplyr$pull(monthName)
-        shiny$selectizeInput(ns("monthName"), "Month", 
-                             choices = monthName, selected = max_month, multiple = FALSE)
+        shiny$selectizeInput(ns("monthName"), "Month",
+          choices = monthName, selected = max_month, multiple = FALSE
+        )
       })
 
       output$analysis <- shiny$renderUI({
