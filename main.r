@@ -1,20 +1,82 @@
-# ui_review <- function(id='review') {
-#   ns <- NS(id)
-#   tagList(
-#    
-#   )
-# }
-# 
-# server_review <- function(id='review') {
-#    box::use(shiny)
-#    shiny(
-#          id,
-#          function(input, output, session) {
-#         ns <- session
-#       }
-#    )
-# }
+ui_preview <- function(id = "preview") {
+  box::use(shiny)
+  ns <- NS(id)
+  shiny$uiOutput("previewData")
+}
 
+server_preview <- function(id = "preview") {
+  box::use(shiny, dplyr)
+  shiny$moduleServer(
+    id,
+    function(input, output, session) {
+      ns <- session
+      output$previewData <- shiny$renderUI({
+        req(previewData())
+        dataNames <- previewData()
+        purrr$map(
+          dataNames,
+          function(x) {
+            data <- x$data
+            nrowData <- nrow(data)
+            column_names <- x$column_names
+            analysis <- x$analysis
+            column_names <- column_names[column_names == toupper(column_names)]
+            nMissing <- data |>
+              dplyr$summarise_all(function(x) {
+                sum(is.na(x)) / nrowData
+              })
+
+            nMissing <-
+              nMissing |>
+              dplyr$select_if(
+                function(x) {
+                  x > 0
+                }
+              )
+            if (ncol(nMissing)) {
+              nMissing <- nMissing |>
+                dplyr$mutate_all(function(x) {
+                  paste0(
+                    round(x, 2), "%"
+                  )
+                })
+              colnames(nMissing) <- paste0(" - ", colnames(nMissing), " - ")
+              nMissing <- shiny$div(
+                shiny$h4("Missing Data"),
+                shiny$div(
+                  class = "d-flex justify-content-center",
+                  htmlTable$htmlTable(nMissing)
+                )
+              )
+            } else {
+              nMissing <- shiny$div()
+            }
+
+            if ("PARAMCD" %in% colnames(x$data)) {
+              paramcd <- unique(x$data[, "PARAMCD"]$PARAMCD)
+              # selectId <-
+              paramcd <- selectizeInput(paste0(analysis, "PARAMCD"),
+                "PARAMCD", paramcd, paramcd,
+                multiple = TRUE
+              )
+            } else {
+              paramcd <- shiny$div()
+            }
+
+            selectId <- paste0(analysis, "columns")
+            shiny$wellPanel(
+              shiny$h4(toupper(analysis), class = "font-weight-bold"),
+              selectizeInput(selectId, "Columns", column_names, column_names, multiple = TRUE),
+              paramcd,
+              # statistics,
+              nMissing
+            )
+          }
+        )
+      })
+    }
+  )
+}
 
 ui <- function() {
   box::use(shiny, bslib)
@@ -49,7 +111,7 @@ ui <- function() {
           ),
           shiny$tabPanel(
             "Preview Data",
-            shiny$uiOutput("previewData")
+            shiny$div('Preview Placeholder')
           )
         )
       )
@@ -152,83 +214,20 @@ server <- function(input, output, session) {
   })
 
   previewData <- reactive({
-     shiny$req(dataToAnalyze)
-     data <- dataToAnalyze()
-     purrr$map(data, function(x) {
-        list(
-           study = unique(x$study),
-           date = unique(x$date),
-           analysis = unique(x$analysis),
-           column_names = colnames(x),
-           data = x
-        )
-     })
+    shiny$req(dataToAnalyze)
+    data <- dataToAnalyze()
+    purrr$map(data, function(x) {
+      list(
+        study = unique(x$study),
+        date = unique(x$date),
+        analysis = unique(x$analysis),
+        column_names = colnames(x),
+        data = x
+      )
+    })
   })
-  output$previewData <- shiny$renderUI({
-     req(previewData())
-     dataNames <- previewData()
 
-    purrr$map(
-      dataNames,
-      function(x) {
-        data <- x$data
-        nrowData <- nrow(data)
-        column_names <- x$column_names
-        analysis <- x$analysis
-        column_names <- column_names[column_names == toupper(column_names)]
-        nMissing <- data |>
-          dplyr$summarise_all(function(x) {
-            sum(is.na(x)) / nrowData
-          })
 
-        nMissing <-
-          nMissing |>
-          dplyr$select_if(
-            function(x) {
-              x > 0
-            }
-          )
-        if (ncol(nMissing)) {
-          nMissing <- nMissing |>
-            dplyr$mutate_all(function(x) {
-              paste0(
-                round(x, 2), "%"
-              )
-            })
-          colnames(nMissing) <- paste0(" - ", colnames(nMissing), " - ")
-          nMissing <- shiny$div(
-            shiny$h4("Missing Data"),
-            shiny$div(
-              class = "d-flex justify-content-center",
-              htmlTable$htmlTable(nMissing)
-            )
-          )
-        } else {
-          nMissing <- shiny$div()
-        }
-
-        if ("PARAMCD" %in% colnames(x$data)) {
-          paramcd <- unique(x$data[, "PARAMCD"]$PARAMCD)
-          # selectId <-
-          paramcd <- selectizeInput(paste0(analysis, "PARAMCD"),
-            "PARAMCD", paramcd, paramcd,
-            multiple = TRUE
-          )
-        } else {
-          paramcd <- shiny$div()
-        }
-
-        selectId <- paste0(analysis, "columns")
-        shiny$wellPanel(
-          shiny$h4(toupper(analysis), class = "font-weight-bold"),
-          selectizeInput(selectId, "Columns", column_names, column_names, multiple = TRUE),
-          paramcd,
-          # statistics,
-          nMissing
-        )
-      }
-    )
-  })
 
   observe({
     print(reactiveValuesToList(input))
