@@ -5,6 +5,7 @@ ui_metadata <- function(id='metadata') {
   shiny$div(
     shiny$checkboxInput(ns('selectAll'), 'Select All', TRUE),
     shiny$actionButton(ns('reset'), 'Reset'),
+    shiny$actionButton(ns('go'), 'Go'),
     shiny$uiOutput(ns('study')),
     shiny$uiOutput(ns('year')),
     shiny$uiOutput(ns('month')),
@@ -54,15 +55,20 @@ server_metadata <- function(id='metadata') {
         shiny$selectizeInput(ns('month'), 'Month', choices=month, selected=selected, multiple=TRUE)
       })
       
+      filteredData <- shiny$eventReactive(
+        input$go, {
+          datafiles <- datafiles()
+          files <- datafiles |> 
+            dplyr$filter(study %in% input$study, year %in% input$year, month %in% input$month) 
+          files
+        }
+      )
+      
       output$outline <- shiny$renderTable({
-        datafiles <- datafiles()
-        files <- datafiles |> 
-          dplyr$filter(study %in% input$study, year %in% input$year, month %in% input$month) 
-        
-        files
+        shiny$req(filteredData())
+        filteredData()
       })
       
-      datafiles
     }
   )
   
