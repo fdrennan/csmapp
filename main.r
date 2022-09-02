@@ -1,15 +1,15 @@
 ui_preview <- function(id = "preview") {
   box::use(shiny)
   ns <- NS(id)
-  shiny$uiOutput("previewData")
+  shiny$uiOutput(ns("previewData"))
 }
 
-server_preview <- function(id = "preview") {
-  box::use(shiny, dplyr)
+server_preview <- function(id = "preview", previewData) {
+  box::use(shiny, dplyr, purrr)
   shiny$moduleServer(
     id,
     function(input, output, session) {
-      ns <- session
+      ns <- session$ns
       output$previewData <- shiny$renderUI({
         req(previewData())
         dataNames <- previewData()
@@ -25,7 +25,7 @@ server_preview <- function(id = "preview") {
               dplyr$summarise_all(function(x) {
                 sum(is.na(x)) / nrowData
               })
-
+            browser()
             nMissing <-
               nMissing |>
               dplyr$select_if(
@@ -54,8 +54,7 @@ server_preview <- function(id = "preview") {
 
             if ("PARAMCD" %in% colnames(x$data)) {
               paramcd <- unique(x$data[, "PARAMCD"]$PARAMCD)
-              # selectId <-
-              paramcd <- selectizeInput(paste0(analysis, "PARAMCD"),
+              paramcd <- selectizeInput(ns(paste0(analysis, "PARAMCD")),
                 "PARAMCD", paramcd, paramcd,
                 multiple = TRUE
               )
@@ -66,7 +65,7 @@ server_preview <- function(id = "preview") {
             selectId <- paste0(analysis, "columns")
             shiny$wellPanel(
               shiny$h4(toupper(analysis), class = "font-weight-bold"),
-              selectizeInput(selectId, "Columns", column_names, column_names, multiple = TRUE),
+              selectizeInput(ns(selectId), "Columns", column_names, column_names, multiple = TRUE),
               paramcd,
               # statistics,
               nMissing
@@ -111,7 +110,7 @@ ui <- function() {
           ),
           shiny$tabPanel(
             "Preview Data",
-            shiny$div('Preview Placeholder')
+            ui_preview()
           )
         )
       )
@@ -227,11 +226,7 @@ server <- function(input, output, session) {
     })
   })
 
-
-
-  observe({
-    print(reactiveValuesToList(input))
-  })
+  server_preview(previewData = previewData)
 }
 
 box::use(shiny)
