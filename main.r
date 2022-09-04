@@ -119,9 +119,8 @@ server <- function(input, output, session) {
              })
            colnames(nMissing) <- paste0(' - ', colnames(nMissing), ' - ')
            nMissing <- shiny$div(
-             shiny$h3('Missing Data'),
+             shiny$h4('Missing Data'),
              shiny$div(
-                class='d-flex justify-content-center',
                 htmlTable$htmlTable(nMissing) 
              )
            )
@@ -141,7 +140,7 @@ server <- function(input, output, session) {
            paramcd <- shiny$div() 
          }
          shiny$wellPanel(
-           shiny$h4(glue$glue('{x$analysis}')),
+           shiny$h4(glue$glue('{toupper(x$analysis)}')),
            shiny$h4('Columns'),
            shiny$tags$ul(
               purrr$map(column_names, function(x) {
