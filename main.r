@@ -190,13 +190,13 @@ server <- function(input, output, session) {
          }
          # browser()
          shiny$wellPanel(
-           shiny$h3(glue$glue('Study: {x$study}')),
-           shiny$h3(glue$glue('Date: {x$date}')),
-           shiny$h3(glue$glue('Analysis: {x$analysis}')),
-           shiny$h3('Columns'),
-           purrr$map(column_names, function(x) {
-             shiny$tags$em(paste0(x, " * "))
-           }),
+           shiny$h4(glue$glue('Analysis: {x$analysis}')),
+           shiny$h4('Columns'),
+           shiny$tags$ul(
+              purrr$map(column_names, function(x) {
+                 shiny$tags$li(x)
+              })
+           ),
            paramcd,
            nMissing
          )
