@@ -82,64 +82,15 @@ server <- function(input, output, session) {
    })
    
    dataToAnalyze <- reactive({
+      box::use(./box/processing)
      shiny$req(filteredData())
-     data <- filteredData() |> 
-       dplyr$arrange(dplyr$desc(date))
-     if (getOption('development')) {
-       data$path <- paste0(getOption('datamisc_cache_path'), data$path)
-     } 
-     n_files <- nrow(data)
-     data <- purrr$imap(
-       split(data, 1:n_files),
-       function(data, y) {
-         y <- as.numeric(y)
-         with(
-           data, {
-             path_ext_type <- fs$path_ext(path)
-             shiny$showNotification(shiny$div(
-               shiny$h6(glue$glue(
-                 'Study {study}'
-               )),
-               shiny$h6(
-                 glue$glue(
-                   'Filename {filename}'
-                 )
-               ),
-               shiny$h6(
-                 glue$glue(
-                   'Files Remaining: {n_files-y}'
-                 )
-               )
-             ), duration=2, closeButton = FALSE)
-             study_data <- switch(
-               path_ext_type,
-               'csv' = readr$read_csv(path),
-               'sas7bdat' = haven$read_sas(path)
-             )
-             
-             dplyr$bind_cols(data, study_data)
-             
-           }
-         )
-       }
-     )
-     
-     data
+     processing$make_data_to_analyze(filteredData())
    })
    
    output$previewData <- shiny$renderUI({
-     shiny$req(dataToAnalyze)
-     data <- dataToAnalyze()
-     dataNames <- purrr$map(data, function(x) {
-       list(
-         study = unique(x$study),
-         date = unique(x$date),
-         analysis = unique(x$analysis),
-         column_names = colnames(x),
-         data = x
-       )
-     })
-     
+      shiny$req(dataToAnalyze)
+      dataNames <- dataToAnalyze()
+      
      purrr$map(
        dataNames,
        function(x) {
@@ -169,16 +120,17 @@ server <- function(input, output, session) {
            colnames(nMissing) <- paste0(' - ', colnames(nMissing), ' - ')
            nMissing <- shiny$div(
              shiny$h3('Missing Data'),
-             htmlTable$htmlTable(nMissing) 
+             shiny$div(
+                class='d-flex justify-content-center',
+                htmlTable$htmlTable(nMissing) 
+             )
            )
              
          } else {
            nMissing <- shiny$div()
          }
-         # browser()
          if ('PARAMCD' %in% colnames(x$data)) {
            paramcd <- unique(x$data[,'PARAMCD']$PARAMCD)
-           # browser()
            paramcd <- shiny$div(
              shiny$h3('PARAMCD'),
              purrr$map(paramcd, function(x) {
@@ -188,9 +140,8 @@ server <- function(input, output, session) {
          } else {
            paramcd <- shiny$div() 
          }
-         # browser()
          shiny$wellPanel(
-           shiny$h4(glue$glue('Analysis: {x$analysis}')),
+           shiny$h4(glue$glue('{x$analysis}')),
            shiny$h4('Columns'),
            shiny$tags$ul(
               purrr$map(column_names, function(x) {
@@ -202,7 +153,6 @@ server <- function(input, output, session) {
          )
        }
      )
-      
    })
 }
 
