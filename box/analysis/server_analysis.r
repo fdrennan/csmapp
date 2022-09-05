@@ -2,52 +2,6 @@
 server <- function(id = "analysis") {
   box::use(shiny, bs4Dash, cli)
 
-  remove_shiny_inputs <- function(id, .input) {
-    invisible(
-      lapply(grep(id, names(.input), value = TRUE), function(i) {
-        .subset2(.input, "impl")$.values$remove(i)
-      })
-    )
-  }
-
-  shiny$moduleServer(
-    id,
-    function(input, output, session) {
-      ns <- session$ns
-      cli$cli_alert_info("parent {id}")
-
-      shiny$observeEvent(input$addButton, {
-        i <- sprintf("%04d", input$addButton)
-        id <- sprintf("statsSplit%s", i)
-
-        ui_test_module <- function(id = "test_module") {
-          box::use(shiny)
-          cli$cli_alert_info("ui {id}")
-          shiny$uiOutput(ns("testUI"))
-        }
-
-        server_test_module <- function(id = "test_module") {
-          box::use(shiny)
-          shiny$moduleServer(
-            id,
-            function(input, output, session) {
-              ns <- session$ns
-              cli$cli_alert_info("server {id}")
-              output$testUI <- shiny$renderUI({
-                shiny$h1("I am working")
-              })
-            }
-          )
-        }
-
-        shiny$insertUI(
-          selector = "#addButton",
-          where = "beforeBegin",
-          ui = ui_test_module(id)
-        )
-
-        server_test_module(id)
-      })
 
       # output$previewData <- shiny$renderUI({
       #   shiny$req(dataToAnalyze)

@@ -1,5 +1,7 @@
-# library(shiny)
+library(shiny)
+library(cli)
 data(mtcars)
+
 cols <- sort(unique(names(mtcars)[names(mtcars) != "mpg"]))
 
 remove_shiny_inputs <- function(id, .input) {
@@ -10,89 +12,69 @@ remove_shiny_inputs <- function(id, .input) {
   )
 }
 
-lmUI <- function(id) {
+ui_lm <- function(id) {
+  cli_alert_info('ui_lm id is {id}')
   ns <- shiny::NS(id)
   shiny::uiOutput(ns("lmModel"))
 }
 
-lmModelModule <- function(id) {
+server_lm <- function(id) {
+  cli_alert_info('server_lm id is {id}')
   moduleServer(
     id,
     function(input, output, session) {
-      lmModel <- reactive({
-        lm(sprintf("mpg ~ %s", paste(input$vars, collapse = "+")), data = mtcars)
-      })
-      
-      output[["lmModel"]] <- renderUI({
-        ns <- session$ns
+      ns <- session$ns
+      output$lmModel <- renderUI({
         tags$div(
           id = environment(ns)[["namespace"]],
-          tagList(
-            wellPanel(
-              fluidRow(
-                column(
-                  3,
-                  tags$h3("Build a Linear Model for MPG"),
-                  selectInput(ns("vars"),
-                              "Select dependent variables",
-                              choices = cols,
-                              selected = cols[1:2],
-                              multiple = TRUE
-                  )
-                ),
-                column(
-                  4,
-                  renderPrint({
-                    summary(lmModel())
-                  })
-                ),
-                column(
-                  4,
-                  renderPlot({
-                    par(mfrow = c(2, 2))
-                    plot(lmModel())
-                  })
-                ),
-                column(
-                  1,
-                  actionButton(ns("deleteButton"),
-                               "",
-                               icon = shiny::icon("times"),
-                               style = "float: right"
-                  )
-                )
-              )
-            )
-          )
+          h1("Hello")
         )
       })
     }
   )
 }
 
-
-ui <- fluidPage(
-  br(),
-  actionButton("addButton", "", icon = icon("plus"))
-)
-server <- function(input, output) {
-  observeEvent(input$addButton, {
-    i <- sprintf("%04d", input$addButton)
-    id <- sprintf("lmModel%s", i)
-    insertUI(
-      selector = "#addButton",
-      where = "beforeBegin",
-      ui = lmUI(id)
-    )
-    lmModelModule(id)
-    observeEvent(input[[paste0(id, "-deleteButton")]], {
-      removeUI(selector = sprintf("#%s", id))
-      remove_shiny_inputs(id, input)
-    })
-  })
+ui_dynamic_module <- function(id='dynamic_module') {
+  ns <- NS(id)
+  cli_alert_info('ui_dynamic_module id is {id}')
+  fluidPage(
+    actionButton(ns("addButton"), "", icon = icon("plus"))
+  )
 }
+
+server_dynamic_module <- function(id='dynamic_module') {
+  cli_alert_info('server_dynamic_module id is {id}')
+  moduleServer(
+    id,
+    function(input, output, session) {
+      observeEvent(input$addButton, {
+        i <- sprintf("%04d", input$addButton)
+        id <- sprintf("lmModel%s", i)
+        insertUI(
+          selector = "#dynamic_module-addButton",
+          where = "beforeBegin",
+          ui = ui_lm(id)
+        )
+        server_lm(id)
+        observeEvent(input[[paste0(id, "-deleteButton")]], {
+          removeUI(selector = sprintf("#%s", id))
+          remove_shiny_inputs(id, input)
+        })
+      })
+    }
+  )
+}
+
+ui <- function() {
+  ui_dynamic_module()
+}
+
+
+
+server <- function(input, output) {
+  server_dynamic_module()
+}
+
 shinyApp(ui = ui, server = server)
 
-
-
-shinyApp(ui = ui, server = server)
+ 
