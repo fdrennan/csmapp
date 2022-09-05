@@ -1,47 +1,23 @@
 #' @export
 server <- function(id = "dynamic_module",
                    parentSession) {
-  box::use(shiny, cli)
+  box::use(shiny, cli, ../lm/server_lm)
+  box::use(shiny, cli, ../lm/ui_lm)
   shiny$moduleServer(
     id,
     function(input, output, session) {
+      ns <- session$ns
       shiny$observeEvent(input$addButton, {
+        
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("lmModel%s", i)
-
-        ui_lm <- function(id) {
-          ns <- shiny::NS(id)
-          shiny$uiOutput(ns("lmModel"))
-        }
-
-        server_lm <- function(id, parentSession) {
-          shiny$moduleServer(
-            id,
-            function(input, output, session) {
-              ns <- session$ns
-              cli$cli_alert_info(ns("lmModel"))
-              output[["lmModel"]] <- shiny$renderUI({
-                browser()
-                # data <- dataToAnalyze()
-                # browser()
-                shiny$div(
-                  id = environment(ns)[["namespace"]],
-                  shiny$div(
-                    environment(ns)[["namespace"]]
-                  )
-                )
-              })
-            },
-            session = parentSession
-          )
-        }
-
+        
         shiny$insertUI(
-          selector = "#dynamic_module-addButton",
+          selector = paste0("#", ns('addButton')),
           where = "beforeBegin",
-          ui = ui_lm(id)
+          ui = ui_lm$ui(id)
         )
-        server_lm(id, parentSession)
+        server_lm$server(id, parentSession)
         shiny$observeEvent(input[[paste0(id, "-deleteButton")]], {
           shiny$removeUI(selector = sprintf("#%s", id))
           remove_shiny_inputs <- function(id, .input) {
