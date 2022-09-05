@@ -34,37 +34,41 @@ server <- function(id, parentSession, inputData) {
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
         
-        shiny$fluidRow(
-          id = environment(ns)[["namespace"]],
-          bs4Dash$box(title = id,
+          bs4Dash$bs4Card(
+            title = paste0(id, '-statsmod'),
+                      id = environment(ns)[["namespace"]],
             width = 12,
             shiny$selectizeInput(ns("statsGroupPARAMCD"),
               shiny$h4(glue$glue("PARAMCD")),
               choices = data[[1]]$PARAMCD,
               selected = data[[1]]$PARAMCD, multiple = TRUE
             ),
-            shiny$div(
-              shiny$fluidRow(
-                shiny$numericInput(
-                  ns("nStatistics"), "n", min = -Inf, max = Inf, value = 2
-                ),
-                shiny$numericInput(
-                  ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2
-                ),
-                shiny$numericInput(
-                  ns("diff_pctStatistics"), "diff_pct", 
-                  min = -Inf, max = Inf, value = 10
-                )
+              shiny$numericInput(
+                ns("nStatistics"), "n", min = -Inf, max = Inf, value = 2
               ),
-              shiny$fluidRow(
-                shiny$actionButton(
-                  ns("deleteButton"),
-                  "",
-                  icon = shiny$icon("minus")
-                ),
+              shiny$numericInput(
+                ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("diff_pctStatistics"), "diff_pct", 
+                min = -Inf, max = Inf, value = 10
+              ),
+              bs4Dash$actionButton(
+                ns("deleteButton"),
+                "Remove", 
+                status = 'warning'
               )
-            )
           )
+      })
+      
+      
+      output$flaggingCode <- shiny$renderUI({
+        shiny$req(input$diff_pctStatistics)
+        # browser()
+        
+        shiny$textInput(
+          ns('flagCode'), 'Flag Code', 
+          'if ((abs(diff_pct)/100*n>2 & diff_pct< -10) & ( p_value<0.05 | r==0)) {flag= -1};'
         )
       })
     },
