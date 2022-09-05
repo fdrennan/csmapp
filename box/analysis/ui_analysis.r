@@ -3,14 +3,21 @@ ui <- function(id) {
   box::use(shiny)
   box::use(shiny, cli, .. / lm / ui_lm)
   ns <- shiny$NS(id)
-  bs4Dash::box(
-    width = 12,
-    id = ns("boxId"), title = id,
-    shiny$actionButton(
-      ns("addButton"),
-      "",
-      icon = shiny$icon("plus")
+  shiny$fluidRow(
+    shiny$column(
+      12,
+      shiny$fluidRow(
+        class='d-flex justify-content-end',
+        shiny$actionButton(class='m-2',
+                           ns("addButton"),
+                           "",
+                           icon = shiny$icon("plus")
+        )
+      )
     ),
-    shiny$uiOutput(ns("server_ui"))
+    shiny$column(
+      12,
+      shiny$uiOutput(ns("server_ui"))
+    )
   )
 }

@@ -10,7 +10,7 @@ ui <- function() {
     dark = TRUE,
     header = bs4Dash$dashboardHeader("CSM Management System"),
     sidebar = bs4Dash$dashboardSidebar(
-      expandOnHover = TRUE, collapsed = FALSE,
+      expandOnHover = TRUE, collapsed = TRUE,
       shiny$div(
         if (getOption("development")) NULL else ui_devop()
       )
