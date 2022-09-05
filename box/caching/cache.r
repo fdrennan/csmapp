@@ -4,7 +4,6 @@ check <- function() {
   cache_path <- getOption("cache_path")
   if (getOption("cache")) {
     analysis_filter <- getOption('analysis_filter')
-    # browser()
     data <- readr$read_rds(cache_path)
     data <- data |> dplyr$filter(!is.na(analysis))
     if (!is.null(analysis_filter)) {
