@@ -6,7 +6,7 @@ server <- function(id, parentSession) {
   shiny$moduleServer(
     id,
     function(input, output, session) {
-      # browser()
+      
       ns <- session$ns
       cli$cli_alert_info(ns("lmModel"))
       output[["lmModel"]] <- shiny$renderUI({

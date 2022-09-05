@@ -7,7 +7,7 @@ server <- function(id, dataToAnalyze, parentSession) {
     function(input, output, session) {
       ns <- session$ns
       shiny$observeEvent(input$addButton, {
-        browser()
+        
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("lmModel%s", i)
         shiny$insertUI(

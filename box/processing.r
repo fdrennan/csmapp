@@ -4,6 +4,7 @@ make_data_to_analyze <- function(filteredData) {
     shiny, dplyr, fs, cli, glue, purrr, readr, haven,
     htmlTable
   )
+  
   data <- filteredData |>
     dplyr$arrange(dplyr$desc(date))
   if (getOption("development")) {

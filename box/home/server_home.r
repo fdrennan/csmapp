@@ -2,28 +2,33 @@
 server <- function(input, output, session) {
   box::use(
     .. / metadata / server_metadata, shiny, dplyr, fs, cli,
-    glue, purrr, readr, haven, htmlTable, bs4Dash, .. / analysis / server_analysis
+    glue, purrr, readr, haven, htmlTable, bs4Dash, 
+    .. / analysis / server_analysis
   )
+  box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
   server_devop$server()
   filteredData <- server_metadata$server()
 
   dataToAnalyze <- shiny$reactive({
     box::use(.. / processing)
-    browser()
     shiny$req(filteredData())
     data <- processing$make_data_to_analyze(filteredData())
     data
   })
-
-  output$previewData <- shiny$renderUI({
-    shiny$req(dataToAnalyze)
-    browser()
-    data <- dataToAnalyze()
+  
+  output$setupAnalysis <- shiny$renderUI({
+    shiny$req(dataToAnalyze())
+    bs4Dash$box(
+      title = "Review",
+      width = 12,
+      ui_analysis$ui('aei'),
+      ui_analysis$ui('rgm')
+    )
   })
 
-  shiny$observeEvent(dataToAnalyze, {
-    # browser()
+  shiny$observe({
+    shiny$req(dataToAnalyze())
     server_analysis$server(id = 'aei', dataToAnalyze, parentSession=session)
     server_analysis$server(id = 'rgm', dataToAnalyze, parentSession=session)
   })
