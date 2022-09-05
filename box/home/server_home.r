@@ -23,11 +23,8 @@ server <- function(input, output, session) {
     shiny$req(dataToAnalyze())
     metadata <- metadata()
     data <- dataToAnalyze()
-    
-    # browser()
-    
+
     output$setupAnalysis <- shiny$renderUI({
-      shiny$req(dataToAnalyze())
       bs4Dash$box(
         title = "Review",
         width = 12,
@@ -39,7 +36,7 @@ server <- function(input, output, session) {
     
     purrr$walk(
       metadata$analysis,
-      function(x) server_analysis$server(id = x, dataToAnalyze, parentSession = session)
+      function(x) server_analysis$server(id = x, data, parentSession = session)
     )
   })
 }

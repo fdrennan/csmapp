@@ -7,23 +7,25 @@ server <- function(id, dataToAnalyze, parentSession) {
     function(input, output, session) {
       ns <- session$ns
       
-      data <- shiny$reactive({
-        data <- purrr$keep(dataToAnalyze(), function(x) {
+      inputData <- shiny$reactive({
+        shiny$req(dataToAnalyze)
+        browser()
+        data <- purrr$keep(dataToAnalyze, function(x) {
           x$analysis == id
         })
       })
       
-      
       output$server_ui <- shiny$renderUI({
-        shiny$req(data())
-        data <- data()
+        # browser()
+        shiny$req(inputData())
+        # data <- data()
         ui_lm$ui(ns(id))
       })
-      server_lm$server(ns(id), parentSession, data)
+      server_lm$server(ns(id), parentSession, inputData)
       
       shiny$observeEvent(input$addButton, {
         
-        data <- data()
+        # data <- inputData()
         
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("analysis%s", i)
@@ -32,7 +34,7 @@ server <- function(id, dataToAnalyze, parentSession) {
           where = "beforeBegin",
           ui = ui_lm$ui(ns(id), data)
         )
-        server_lm$server(ns(id), parentSession, data)
+        server_lm$server(ns(id), parentSession, inputData)
         shiny$observeEvent(input[[paste0(id, "-deleteButton")]], {
           shiny$removeUI(selector = sprintf("#%s", id))
           remove_shiny_inputs <- function(id, .input) {
