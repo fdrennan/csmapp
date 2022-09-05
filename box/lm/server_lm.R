@@ -43,10 +43,26 @@ server <- function(id, parentSession, inputData) {
               choices = data[[1]]$PARAMCD,
               selected = data[[1]]$PARAMCD, multiple = TRUE
             ),
-            shiny$fluidRow(
-              shiny$numericInput(ns("nStatistics"), "n", min = -Inf, max = Inf, value = 2),
-              shiny$numericInput(ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2),
-              shiny$numericInput(ns("diff_pctStatistics"), "diff_pct", min = -Inf, max = Inf, value = 10)
+            shiny$div(
+              shiny$fluidRow(
+                shiny$numericInput(
+                  ns("nStatistics"), "n", min = -Inf, max = Inf, value = 2
+                ),
+                shiny$numericInput(
+                  ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2
+                ),
+                shiny$numericInput(
+                  ns("diff_pctStatistics"), "diff_pct", 
+                  min = -Inf, max = Inf, value = 10
+                )
+              ),
+              shiny$fluidRow(
+                shiny$actionButton(
+                  ns("deleteButton"),
+                  "",
+                  icon = shiny$icon("minus")
+                ),
+              )
             )
           )
         )
