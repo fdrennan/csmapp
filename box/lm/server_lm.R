@@ -21,8 +21,8 @@ server <- function(id, parentSession, inputData) {
       cli$cli_alert_info(ns("lmModel"))
       
       shiny$observeEvent(input$deleteButton, {
-        browser()
         shiny$removeUI(selector =  paste0('#',paste0(id, '-lmModel')))
+        shiny$removeUI(selector =  paste0('#',ns('deleteButton')))
         remove_shiny_inputs(id, input)
       })
       
