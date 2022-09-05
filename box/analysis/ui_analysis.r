@@ -1,5 +1,5 @@
 #' @export
-ui <- function(id) {
+ui <- function(id, data) {
   box::use(shiny)
   box::use(shiny, cli, .. / lm / ui_lm)
   ns <- shiny$NS(id)
@@ -7,7 +7,7 @@ ui <- function(id) {
     shiny$column(
       12,
       shiny$fluidRow(
-        class='d-flex justify-content-end',
+        class='d-flex justify-content-end align-items-end',
         shiny$actionButton(class='m-2',
                            ns("addButton"),
                            "",

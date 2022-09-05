@@ -24,12 +24,19 @@ server <- function(input, output, session) {
     data <- dataToAnalyze()
 
     output$setupAnalysis <- shiny$renderUI({
-      bs4Dash$box(
-        title = "Review",
-        width = 12,
-        purrr$map(
-          unique(metadata$analysis), ui_analysis$ui
-        )
+      purrr$map(
+        unique(metadata$analysis), function(x) {
+          shiny$div(
+            shiny$fluidRow(
+              shiny$column(12, shiny$h3(x, class='display-3 text-center')),
+              shiny$column(
+                12,
+                ui_analysis$ui(x, data)
+              )
+            ),
+            shiny$tags$hr()
+          )
+        }
       )
     })
 

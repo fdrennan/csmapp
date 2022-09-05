@@ -25,20 +25,18 @@ server <- function(id, dataToAnalyze, parentSession) {
 
       shiny$observeEvent(input$addButton, {
         shiny$req(updateId())
+        shiny$req(inputData())
         ui_id <- updateId()
         shiny$insertUI(
           selector = paste0("#", ns("addButton")),
           where = "beforeBegin",
           ui = shiny$div(
             class='m-2',
-            ui_lm$ui(ui_id, data)
+            ui_lm$ui(ui_id, inputData())
           )
         )
         server_lm$server(ui_id, parentSession, inputData)
 
-        shiny$observeEvent(input$deleteButton, {
-          shiny$showNotification("TODO: Set up delete button")
-        })
       })
     },
     session = parentSession

@@ -32,7 +32,7 @@ server <- function(id, parentSession, inputData) {
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
 
-        shiny$div(class='p-2 m-2',
+        shiny$div(class='p-1 m-1',
           bs4Dash$bs4Card(
             title = id,
             id = environment(ns)[["namespace"]],
