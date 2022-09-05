@@ -4,7 +4,7 @@ ui <- function(id = "analysis") {
   ns <- shiny$NS(id)
   # shiny$uiOutput(ns("previewData"))
   shiny$actionButton(
-    ns("addButton"), "", 
+    ns("addButton"), "",
     icon = shiny$icon("plus")
   )
 }
