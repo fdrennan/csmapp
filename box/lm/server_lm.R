@@ -12,7 +12,7 @@ server <- function(id, parentSession, inputData) {
 
 
   box::use(shiny, cli, bs4Dash, glue, shinyAce, styler)
-    shiny$moduleServer(
+  shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
@@ -32,70 +32,54 @@ server <- function(id, parentSession, inputData) {
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
 
-        shiny$div(class='p-1 m-1',
-          bs4Dash$bs4Card(
-            title = id,
-            id = environment(ns)[["namespace"]],
-            width = 12,
-            shiny$fluidRow(
-              shiny$column(12, 
-                           shiny$fluidRow(class='d-flex justify-content-between align-items-center',
-                                          shiny$selectizeInput(ns("statsGroupPARAMCD"),  
-                                                               shiny$h4(glue$glue("Signal / Flag Mapper")),
-                                                               choices = data[[1]]$PARAMCD,
-                                                               selected = data[[1]]$PARAMCD, multiple = TRUE
-                                          ),
-                                          bs4Dash$actionButton(
-                                            ns("deleteButton"),
-                                            "", 
-                                            icon = shiny$icon('x'),
-                                            class='btn', style = 'height: 3rem;'
-                                          )
-                           )
-              ),
-              shiny$column(
-                12,
-                shiny$fluidRow(class='d-flex justify-content-between',
-                               shiny$numericInput(
-                                 ns("nStatistics"), "n",
-                                 min = -Inf, max = Inf, value = 2
-                               ),
-                               shiny$numericInput(
-                                 ns("rStatistics"), "r",
-                                 min = -Inf, max = Inf, value = 2
-                               ),
-                               shiny$numericInput(
-                                 ns("diff_pctStatistics"), "diff_pct",
-                                 min = -Inf, max = Inf, value = 10
-                               )
-                ),
-                shiny$fluidRow(
-                  shiny$numericInput(
-                    ns("flagValue"), "Flag",
-                    min = -5, max = 5, value = 1, step = 1
-                  )
-                )
-              ),
-              shiny$column(
-                12,
-                shiny$uiOutput(ns("flaggingCode"))
-              )
-            )
+        bs4Dash$bs4Card(
+          title = id,
+          id = environment(ns)[["namespace"]],
+          width = 12,
+          shiny$wellPanel(
+            shiny$selectizeInput(ns("statsGroupPARAMCD"),
+                                 shiny$h4(glue$glue("Signal / Flag Mapper")),
+                                 choices = data[[1]]$PARAMCD,
+                                 selected = data[[1]]$PARAMCD, multiple = TRUE
+            ),
+            bs4Dash$actionButton(
+              ns("deleteButton"),
+              "",
+              icon = shiny$icon("x"),
+              class = "btn", style = "height: 3rem;"
+            ),
+            shiny$numericInput(
+              ns("nStatistics"), "n",
+              min = -Inf, max = Inf, value = 2
+            ),
+            shiny$numericInput(
+              ns("rStatistics"), "r",
+              min = -Inf, max = Inf, value = 2
+            ),
+            shiny$numericInput(
+              ns("diff_pctStatistics"), "diff_pct",
+              min = -Inf, max = Inf, value = 10
+            ),
+            shiny$numericInput(
+              ns("flagValue"), "Flag",
+              min = -5, max = 5, value = 1, step = 1
+            ),
+            shiny$uiOutput(ns("flaggingCode"))
           )
         )
       })
-      
+
       syledCode <- shiny$reactive({
         shiny$req(input$diff_pctStatistics)
-        
+
         nStatistics <- input$nStatistics
         diff_pctStatistics <- input$diff_pctStatistics
         rStatistics <- input$rStatistics
-        
-        stats_1 <- glue$glue('(abs(diff_pct)/100 * {nStatistics} > 2)')
-        stats_2 <- glue$glue('(diff_pct < {diff_pctStatistics})')
-        stats_3 <- glue$glue('(p_value<0.05 | r== {rStatistics})')
-        stats_code <- paste0(c(stats_1, stats_2, stats_3), collapse = ' &\n')
+
+        stats_1 <- glue$glue("(abs(diff_pct)/100 * {nStatistics} > 2)")
+        stats_2 <- glue$glue("(diff_pct < {diff_pctStatistics})")
+        stats_3 <- glue$glue("(p_value<0.05 | r== {rStatistics})")
+        stats_code <- paste0(c(stats_1, stats_2, stats_3), collapse = " &\n")
         # browser()
         code <-
           styler$style_text(
@@ -107,7 +91,7 @@ server <- function(id, parentSession, inputData) {
             )
           )
       })
-      
+
       output$flaggingCode <- shiny$renderUI({
         shiny$req(syledCode())
         code <- syledCode()

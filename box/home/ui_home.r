@@ -12,14 +12,11 @@ ui <- function() {
     sidebar = bs4Dash$dashboardSidebar(
       expandOnHover = TRUE, collapsed = TRUE,
       shiny$div(
-        if (getOption("development")) NULL else ui_devop()
+        if (getOption("development")) NULL else ui_devop(),
+        ui_metadata$ui()
       )
     ),
     body = bs4Dash$dashboardBody(
-      bs4Dash$box(
-        collapsable = TRUE, width = 12, title = "Filter",
-        ui_metadata$ui()
-      ),
       shiny$uiOutput("setupAnalysis")
     )
   )

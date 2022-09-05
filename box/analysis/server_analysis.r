@@ -30,13 +30,9 @@ server <- function(id, dataToAnalyze, parentSession) {
         shiny$insertUI(
           selector = paste0("#", ns("addButton")),
           where = "beforeBegin",
-          ui = shiny$div(
-            class='m-2',
-            ui_lm$ui(ui_id, inputData())
-          )
+          ui = ui_lm$ui(ui_id, inputData())
         )
         server_lm$server(ui_id, parentSession, inputData)
-
       })
     },
     session = parentSession

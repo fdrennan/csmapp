@@ -28,7 +28,7 @@ server <- function(input, output, session) {
         unique(metadata$analysis), function(x) {
           shiny$div(
             shiny$fluidRow(
-              shiny$column(12, shiny$h3(x, class='display-3 text-center')),
+              shiny$column(12, shiny$h3(x, class = "display-3 text-center")),
               shiny$column(
                 12,
                 ui_analysis$ui(x, data)
