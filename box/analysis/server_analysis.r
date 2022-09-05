@@ -14,18 +14,10 @@ server <- function(id, dataToAnalyze, parentSession) {
         })
       })
 
-      output$server_ui <- shiny$renderUI({
-        # browser()
-        shiny$req(inputData())
-        # data <- data()
-        ui_lm$ui(ns(id))
-      })
-      server_lm$server(ns(id), parentSession, inputData)
-
       shiny$observeEvent(input$addButton, {
 
         i <- sprintf("%04d", input$addButton)
-        id <- sprintf("analysis%s", i)
+        id <- sprintf("%s", i)
         shiny$insertUI(
           selector = paste0("#", ns("addButton")),
           where = "beforeBegin",

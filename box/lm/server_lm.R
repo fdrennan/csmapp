@@ -12,8 +12,11 @@ server <- function(id, parentSession, inputData) {
       output[["lmModel"]] <- shiny$renderUI({
         shiny$req(inputData)
         data <- inputData()
+        
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
+        browser()
+        
         shiny$fluidRow(
           id = environment(ns)[["namespace"]],
           bs4Dash$box(title = id,

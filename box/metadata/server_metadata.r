@@ -83,15 +83,7 @@ server <- function(id = "metadata") {
 
       out <- shiny$reactive({
         shiny$req(filteredData())
-        tryCatch(
-          {
-            filteredData()
-          },
-          error = function(err) {
-            shiny$showNotification("Error")
-            FALSE
-          }
-        )
+        filteredData()
       })
       out
     }
