@@ -1,3 +1,6 @@
+restart:
+	R -e "rstudioapi::restartSession('shiny::runApp(\"main.r\")')"
+	
 style:
 	R -e "styler::style_dir()"
 

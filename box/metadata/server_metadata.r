@@ -8,6 +8,7 @@ server <- function(id = "metadata") {
       ns <- session$ns
 
       datafiles <- shiny$reactive({
+        
         box::use(.. / caching / cache)
         datafiles <- cache$check()
         datafiles
@@ -15,6 +16,7 @@ server <- function(id = "metadata") {
 
       output$study <- shiny$renderUI({
         shiny$req(datafiles())
+        browser()
         datafiles <- datafiles()
         study <- datafiles()$study
 

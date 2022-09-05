@@ -10,6 +10,7 @@ server <- function(input, output, session) {
 
   dataToAnalyze <- shiny$reactive({
     box::use(.. / processing)
+    browser()
     shiny$req(filteredData())
     data <- processing$make_data_to_analyze(filteredData())
     data
@@ -17,11 +18,15 @@ server <- function(input, output, session) {
 
   output$previewData <- shiny$renderUI({
     shiny$req(dataToAnalyze)
+    browser()
     data <- dataToAnalyze()
   })
 
-  server_analysis$server(id = 'aei', parentSession=session)
-  server_analysis$server(id = 'rgm', parentSession=session)
+  shiny$observeEvent(dataToAnalyze, {
+    # browser()
+    server_analysis$server(id = 'aei', dataToAnalyze, parentSession=session)
+    server_analysis$server(id = 'rgm', dataToAnalyze, parentSession=session)
+  })
 }
 
 

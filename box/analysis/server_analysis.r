@@ -1,5 +1,5 @@
 #' @export
-server <- function(id, parentSession) {
+server <- function(id, dataToAnalyze, parentSession) {
   box::use(shiny, cli, ../lm/server_lm)
   box::use(shiny, cli, ../lm/ui_lm)
   shiny$moduleServer(
@@ -7,10 +7,9 @@ server <- function(id, parentSession) {
     function(input, output, session) {
       ns <- session$ns
       shiny$observeEvent(input$addButton, {
-        
+        browser()
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("lmModel%s", i)
-        browser()
         shiny$insertUI(
           selector = paste0("#", ns('addButton')),
           where = "beforeBegin",
@@ -39,33 +38,7 @@ server <- function(id, parentSession) {
 # server <- function(id = "analysis") {
 #   box::use(shiny, bs4Dash, cli)
 # 
-#   output$previewData <- shiny$renderUI({
-#     shiny$req(dataToAnalyze)
-#     data <- dataToAnalyze()
-# 
-#     purrr$map(
-#       data,
-#       function(x) {
-#         data <- x$data
-#         bs4Dash$bs4Card(
-#           width = 12,
-#           id = paste0("analysisSetup", x$analysis),
-#           title = toupper(x$analysis),
-#           closable = TRUE,
-#           sidebar = bs4Dash$cardSidebar(
-#             id = paste0("analysisSetup", x$analysis, "sidebar"),
-#             startOpen = TRUE,
-#             easyClose = TRUE,
-#             shiny$numericInput(paste0(x$analysis, "statsSplit"), "Stats Split",
-#               value = 1,
-#               min = 1, max = 10, step = 1
-#             )
-#           ),
-#           shiny$uiOutput(paste0("statsSplitUI", x$analysis))
-#         )
-#       }
-#     )
-#   })
+
 # 
 # 
 #   output$statsSplitUIaei <- shiny$renderUI({
