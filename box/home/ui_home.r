@@ -4,6 +4,7 @@ ui <- function() {
   box::use(bs4Dash)
   box::use(.. / metadata / ui_metadata)
   box::use(.. / devop / ui_devop)
+  box::use(../ analysis/ui_analysis)
   bs4Dash$dashboardPage(
     dark = TRUE,
     header = bs4Dash$dashboardHeader("CSM Management System"),
@@ -21,7 +22,7 @@ ui <- function() {
       bs4Dash$box(
         title = "Review",
         width = 12,
-        shiny$uiOutput("previewData")
+        ui_analysis$ui()
       )
     )
   )
