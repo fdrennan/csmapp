@@ -3,7 +3,7 @@ check <- function() {
   box::use(readr, dplyr)
   cache_path <- getOption("cache_path")
   if (getOption("cache")) {
-    analysis_filter <- getOption('analysis_filter')
+    analysis_filter <- getOption("analysis_filter")
     data <- readr$read_rds(cache_path)
     data <- data |> dplyr$filter(!is.na(analysis))
     if (!is.null(analysis_filter)) {

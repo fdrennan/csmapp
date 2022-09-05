@@ -3,8 +3,8 @@ server <- function(id, dataToAnalyze, parentSession) {
   box::use(shiny, cli, .. / lm / server_lm)
   box::use(shiny, cli, .. / lm / ui_lm, purrr)
 
-  
-  
+
+
   shiny$moduleServer(
     id,
     function(input, output, session) {
@@ -16,7 +16,7 @@ server <- function(id, dataToAnalyze, parentSession) {
           x$analysis == id
         })
       })
-      
+
       updateId <- shiny$eventReactive(input$addButton, {
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("%s", i)
@@ -32,15 +32,11 @@ server <- function(id, dataToAnalyze, parentSession) {
           ui = ui_lm$ui(ui_id, data)
         )
         server_lm$server(ui_id, parentSession, inputData)
-        
+
         shiny$observeEvent(input$deleteButton, {
-          shiny$showNotification('TODO: Set up delete button')
+          shiny$showNotification("TODO: Set up delete button")
         })
-        
-
       })
-      
-
     },
     session = parentSession
   )

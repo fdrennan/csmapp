@@ -3,7 +3,8 @@ ui <- function(id) {
   box::use(shiny)
   box::use(shiny, cli, .. / lm / ui_lm)
   ns <- shiny$NS(id)
-  bs4Dash::box(width=12,
+  bs4Dash::box(
+    width = 12,
     id = ns("boxId"), title = id,
     shiny$uiOutput(ns("server_ui")),
     shiny$actionButton(
