@@ -33,13 +33,21 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
 
         bs4Dash$bs4Card(
-          title = paste0(id, "-statsmod"),
+          title = id,
           id = environment(ns)[["namespace"]],
           width = 12,
+          shiny$div(class='d-flex justify-content-end',
+            bs4Dash$actionButton(
+              ns("deleteButton"),
+              "", 
+              icon = shiny$icon('x')
+              # status = "warning"
+            )
+          ),
           shiny$selectizeInput(ns("statsGroupPARAMCD"),
-            shiny$h4(glue$glue("PARAMCD")),
-            choices = data[[1]]$PARAMCD,
-            selected = data[[1]]$PARAMCD, multiple = TRUE
+                               shiny$h4(glue$glue("PARAMCD")),
+                               choices = data[[1]]$PARAMCD,
+                               selected = data[[1]]$PARAMCD, multiple = TRUE
           ),
           shiny$numericInput(
             ns("nStatistics"), "n",
@@ -56,11 +64,6 @@ server <- function(id, parentSession, inputData) {
           shiny$numericInput(
             ns("diff_negpctStatistics"), "diff_pct",
             min = -Inf, max = Inf, value = 10
-          ),
-          bs4Dash$actionButton(
-            ns("deleteButton"),
-            "Remove",
-            status = "warning"
           ),
           shiny$uiOutput(ns("flaggingCode"))
         )
