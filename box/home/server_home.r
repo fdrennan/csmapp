@@ -20,8 +20,8 @@ server <- function(input, output, session) {
     data <- dataToAnalyze()
   })
 
-  server_analysis$server(parentSession=session)
-  server_analysis$server('aei', parentSession=session)
+  server_analysis$server(id = 'aei', parentSession=session)
+  server_analysis$server(id = 'rgm', parentSession=session)
 }
 
 

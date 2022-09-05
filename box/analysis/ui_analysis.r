@@ -1,8 +1,8 @@
 #' @export
-ui <- function(id = "dynamic_module") {
+ui <- function(id) {
   box::use(shiny)
   ns <- shiny$NS(id)
-  bs4Dash::box(
+  bs4Dash::box(id = ns('boxId'),
     shiny$actionButton(
       ns("addButton"), 
       "", 

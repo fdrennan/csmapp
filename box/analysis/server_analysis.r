@@ -1,6 +1,5 @@
 #' @export
-server <- function(id = "dynamic_module",
-                   parentSession) {
+server <- function(id, parentSession) {
   box::use(shiny, cli, ../lm/server_lm)
   box::use(shiny, cli, ../lm/ui_lm)
   shiny$moduleServer(
@@ -11,13 +10,13 @@ server <- function(id = "dynamic_module",
         
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("lmModel%s", i)
-        
+        browser()
         shiny$insertUI(
           selector = paste0("#", ns('addButton')),
           where = "beforeBegin",
-          ui = ui_lm$ui(id)
+          ui = ui_lm$ui(ns(id))
         )
-        server_lm$server(id, parentSession)
+        server_lm$server(ns(id), parentSession)
         shiny$observeEvent(input[[paste0(id, "-deleteButton")]], {
           shiny$removeUI(selector = sprintf("#%s", id))
           remove_shiny_inputs <- function(id, .input) {

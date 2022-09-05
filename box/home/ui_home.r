@@ -24,8 +24,8 @@ ui <- function() {
       bs4Dash$box(
         title = "Review",
         width = 12,
-        ui_analysis$ui(),
-        ui_analysis$ui('aei')
+        ui_analysis$ui('aei'),
+        ui_analysis$ui('rgm')
       )
     )
   )
