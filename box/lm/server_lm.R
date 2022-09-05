@@ -15,7 +15,7 @@ server <- function(id, parentSession, inputData) {
         
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
-        browser()
+        # browser()
         
         shiny$fluidRow(
           id = environment(ns)[["namespace"]],
