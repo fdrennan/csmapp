@@ -8,14 +8,12 @@ server <- function(id = "metadata") {
       ns <- session$ns
 
       datafiles <- shiny$reactive({
-        
         box::use(.. / caching / cache)
         datafiles <- cache$check()
         datafiles
       })
 
       output$study <- shiny$renderUI({
-        
         shiny$req(datafiles())
         datafiles <- datafiles()
         study <- datafiles$study
@@ -27,7 +25,6 @@ server <- function(id = "metadata") {
       })
 
       output$year <- shiny$renderUI({
-        
         shiny$req(input$study)
         datafiles <- datafiles()
         year <- datafiles |>
@@ -38,7 +35,6 @@ server <- function(id = "metadata") {
       })
 
       output$month <- shiny$renderUI({
-        
         datafiles <- datafiles()
         shiny$req(input$year)
         monthName <- datafiles |>
@@ -52,7 +48,6 @@ server <- function(id = "metadata") {
       })
 
       output$analysis <- shiny$renderUI({
-        
         shiny$req(input$monthName)
         datafiles <- datafiles()
         analysis <- datafiles |>
@@ -74,7 +69,6 @@ server <- function(id = "metadata") {
       filteredData <- shiny$eventReactive(
         input$go,
         {
-          
           datafiles <- datafiles()
           files <- datafiles |>
             dplyr$filter(
@@ -88,15 +82,15 @@ server <- function(id = "metadata") {
       )
 
       out <- shiny$reactive({
-        
-        tryCatch({
-          
-          filteredData()
-        }, error = function(err) {
-          
-          shiny$showNotification('Error')
-          FALSE
-        })
+        tryCatch(
+          {
+            filteredData()
+          },
+          error = function(err) {
+            shiny$showNotification("Error")
+            FALSE
+          }
+        )
       })
       out
     }

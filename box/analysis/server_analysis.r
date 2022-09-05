@@ -1,21 +1,24 @@
 #' @export
 server <- function(id, dataToAnalyze, parentSession) {
-  box::use(shiny, cli, ../lm/server_lm)
-  box::use(shiny, cli, ../lm/ui_lm)
+  box::use(shiny, cli, .. / lm / server_lm)
+  box::use(shiny, cli, .. / lm / ui_lm, purrr)
   shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
       shiny$observeEvent(input$addButton, {
-        
+        data <- purrr$keep(dataToAnalyze(), function(x) {
+          x$analysis == id
+        })
+
         i <- sprintf("%04d", input$addButton)
-        id <- sprintf("lmModel%s", i)
+        id <- sprintf("analysis%s", i)
         shiny$insertUI(
-          selector = paste0("#", ns('addButton')),
+          selector = paste0("#", ns("addButton")),
           where = "beforeBegin",
-          ui = ui_lm$ui(ns(id))
+          ui = ui_lm$ui(ns(id), data)
         )
-        server_lm$server(ns(id), parentSession)
+        server_lm$server(ns(id), parentSession, data)
         shiny$observeEvent(input[[paste0(id, "-deleteButton")]], {
           shiny$removeUI(selector = sprintf("#%s", id))
           remove_shiny_inputs <- function(id, .input) {
@@ -29,7 +32,8 @@ server <- function(id, dataToAnalyze, parentSession) {
           remove_shiny_inputs(id, input)
         })
       })
-    }, session = parentSession
+    },
+    session = parentSession
   )
 }
 
@@ -37,10 +41,10 @@ server <- function(id, dataToAnalyze, parentSession) {
 #' @export
 # server <- function(id = "analysis") {
 #   box::use(shiny, bs4Dash, cli)
-# 
+#
 
-# 
-# 
+#
+#
 #   output$statsSplitUIaei <- shiny$renderUI({
 #     shiny$req(input$aeistatsSplit)
 #     data <- dataToAnalyze()

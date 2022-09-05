@@ -4,7 +4,7 @@ ui <- function() {
   box::use(bs4Dash)
   box::use(.. / metadata / ui_metadata)
   box::use(.. / devop / ui_devop)
-  
+
 
 
   bs4Dash$dashboardPage(
@@ -21,7 +21,7 @@ ui <- function() {
         collapsable = TRUE, width = 12, title = "Filter",
         ui_metadata$ui()
       ),
-      shiny$uiOutput('setupAnalysis')
+      shiny$uiOutput("setupAnalysis")
     )
   )
 }

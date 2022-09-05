@@ -2,9 +2,9 @@ if (FALSE) {
   library(shiny)
   library(cli)
   data(mtcars)
-  
+
   cols <- sort(unique(names(mtcars)[names(mtcars) != "mpg"]))
-  
+
   remove_shiny_inputs <- function(id, .input) {
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
@@ -12,19 +12,19 @@ if (FALSE) {
       })
     )
   }
-  
+
   ui_lm <- function(id) {
     ns <- shiny::NS(id)
     uiOutput(ns("lmModel"))
   }
-  
+
   server_lm <- function(id, parentSession) {
     moduleServer(
       id,
       function(input, output, session) {
         ns <- session$ns
         cli_alert_info(ns("lmModel"))
-        output[['lmModel']] <- renderUI({
+        output[["lmModel"]] <- renderUI({
           tags$div(
             id = environment(ns)[["namespace"]],
             div(
@@ -32,19 +32,18 @@ if (FALSE) {
             )
           )
         })
-      }, session = parentSession
+      },
+      session = parentSession
     )
   }
-  
-  ui_dynamic_module <- function(id='dynamic_module') {
+
+  ui_dynamic_module <- function(id = "dynamic_module") {
     ns <- NS(id)
     actionButton(ns("addButton"), "", icon = icon("plus"))
   }
-  
-  server_dynamic_module <- function(
-    id='dynamic_module', 
-    parentSession
-  ) {
+
+  server_dynamic_module <- function(id = "dynamic_module",
+                                    parentSession) {
     moduleServer(
       id,
       function(input, output, session) {
@@ -65,18 +64,16 @@ if (FALSE) {
       }
     )
   }
-  
+
   ui <- function() {
     ui_dynamic_module()
   }
-  
-  
-  
+
+
+
   server <- function(input, output, session) {
     server_dynamic_module(parentSession = session)
   }
-  
+
   shinyApp(ui = ui, server = server)
-  
-  
 }
