@@ -11,22 +11,56 @@ server <- function(input, output, session) {
   dataToAnalyze <- shiny$reactive({
     box::use(.. / processing)
     shiny$req(filteredData())
-    processing$make_data_to_analyze(filteredData())
+    data <- processing$make_data_to_analyze(filteredData())
+    data
   })
 
   output$previewData <- shiny$renderUI({
     shiny$req(dataToAnalyze)
-    dataNames <- dataToAnalyze()
+    data <- dataToAnalyze()
+    data <- purrr$keep(data, function(x) {x$analysis=='aei'})
     purrr$map(
-      dataNames,
+      data,
       function(x) {
-        # For each analysis, grab the file
         data <- x$data
-        bs4Dash$bs4Card(
-          title = toupper(x$analysis), closable=TRUE
+        bs4Dash$bs4Card(width = 12,
+                        id=paste0('analysisSetup',x$analysis),
+          title = toupper(x$analysis),
+          closable = TRUE,
+          shiny$fluidRow(
+            shiny$column(
+              3,
+              shiny$numericInput(paste0(x$analysis, "statsSplit"), "Stats Split",
+                                 value = 1,
+                                 min = 1, max = 10, step = 1
+              ), 
+              bs4Dash$actionButton(paste0('submitStatsSplit', x$analysis), 'Go')
+            ),
+            shiny$column(
+              9, 
+              shiny$uiOutput(paste0('statsSplitUI', x$analysis))
+            )
+          )
         )
       }
     )
+  })
+  
+  
+  output$statsSplitUIaei <- shiny$renderUI({
+    shiny$req(input$submitStatsSplitaei)
+    shiny$req(input$aeistatsSplit)
+    data <- dataToAnalyze()
+    data <- purrr$keep(data, function(x) {x$analysis=='aei'})
+    purrr$map(
+      1:input$aeistatsSplit,
+      function(x) {
+        shiny$selectizeInput(paste0(x, 'statsGroupPARAMCD'),
+                             'Stats Group', choices = data[[1]]$PARAMCD,
+                             selected = data[[1]]$PARAMCD, multiple = TRUE)
+      }
+    )
+    # browser()
   })
 }
 
@@ -34,12 +68,12 @@ server <- function(input, output, session) {
 
 todo <- function() {
   nrowData <- nrow(data)
-  
+
   nMissing <- data |>
     dplyr$summarise_all(function(x) {
       sum(is.na(x)) / nrowData
     })
-  
+
   nMissing <-
     nMissing |>
     dplyr$select_if(

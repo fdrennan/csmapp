@@ -43,13 +43,13 @@ make_data_to_analyze <- function(filteredData) {
       )
     }
   )
-
   purrr$map(data, function(x) {
     list(
       study = unique(x$study),
       date = unique(x$date),
       analysis = unique(x$analysis),
       column_names = colnames(x),
+      PARAMCD = unique(x$PARAMCD),
       data = x
     )
   })

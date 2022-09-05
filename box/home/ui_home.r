@@ -14,10 +14,12 @@ ui <- function() {
       )
     ),
     body = bs4Dash$dashboardBody(
-      bs4Dash$box(collapsable=TRUE, width=12, title = 'Filter',
+      bs4Dash$box(
+        collapsable = TRUE, width = 12, title = "Filter",
         ui_metadata$ui()
       ),
-      bs4Dash$box(title='Review',
+      bs4Dash$box(
+        title = "Review",
         width = 12,
         shiny$uiOutput("previewData")
       )
