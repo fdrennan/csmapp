@@ -2,7 +2,7 @@
 server <- function(input, output, session) {
   box::use(
     .. / metadata / server_metadata, shiny, dplyr, fs, cli,
-    glue, purrr, readr, haven, htmlTable, bs4Dash, ../analysis/server_analysis
+    glue, purrr, readr, haven, htmlTable, bs4Dash, .. / analysis / server_analysis
   )
   box::use(.. / devop / server_devop)
   server_devop$server()
@@ -21,19 +21,18 @@ server <- function(input, output, session) {
   })
 
   server_analysis$server()
-
 }
 
 
 
 # todo <- function() {
 #   nrowData <- nrow(data)
-# 
+#
 #   nMissing <- data |>
 #     dplyr$summarise_all(function(x) {
 #       sum(is.na(x)) / nrowData
 #     })
-# 
+#
 #   nMissing <-
 #     nMissing |>
 #     dplyr$select_if(

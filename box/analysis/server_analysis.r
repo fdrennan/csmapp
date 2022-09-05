@@ -1,66 +1,59 @@
 #' @export
-server <- function(id='analysis') {
- box::use(shiny, bs4Dash) 
+server <- function(id = "analysis") {
+  box::use(shiny, bs4Dash, cli)
+  
+  remove_shiny_inputs <- function(id, .input) {
+    invisible(
+      lapply(grep(id, names(.input), value = TRUE), function(i) {
+        .subset2(.input, "impl")$.values$remove(i)
+      })
+    )
+  }
+  
   shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
-      remove_shiny_inputs <- function(id, .input) {
-        invisible(
-          lapply(grep(id, names(.input), value = TRUE), function(i) {
-            .subset2(.input, "impl")$.values$remove(i)
-          })
-        )
-      }
-      
+      cli$cli_alert_info("parent {id}")
 
-      
       shiny$observeEvent(input$addButton, {
-        i <- sprintf('%04d', input$addButton)
-        id <- sprintf('statsSplit%s', i)
-        
-        
+        i <- sprintf("%04d", input$addButton)
+        id <- sprintf("statsSplit%s", i)
+      
         ui_test_module <- function(id='test_module') {
           box::use(shiny)
-          # browser()
-          print(ns(id))
-          ns <- shiny$NS(id)
-          # "analysis-statsSplit0001-analysis-statsSplit0001"
-          shiny$uiOutput(ns('testUI'))
+          cli$cli_alert_info("ui {id}")
+          shiny$uiOutput(ns("testUI"))
         }
-        
-        shiny$insertUI(
-          selector = '#addButton',
-          where = "beforeBegin",
-          ui = ui_test_module(id)
-        )
-        
-        server_test_module <- function(id='test_module', parentSesh) {
+
+        server_test_module <- function(id = "test_module") {
           box::use(shiny)
           shiny$moduleServer(
             id,
             function(input, output, session) {
-              browser()
               ns <- session$ns
-              print(ns(id))
+              cli$cli_alert_info("server {id}")
               output$testUI <- shiny$renderUI({
-                shiny$h1('I am working')
+                shiny$h1("I am working")
               })
-            } , session = parentSesh
+            }
           )
         }
         
-        server_test_module(id, session)
-        shiny$observeEvent(input[[paste0(id, '-deleteButton')]], {
-          shiny$removeUI(selector = sprintf('#%s', id))
-          remove_shiny_inputs(id, input)
-        })
+        shiny$insertUI(
+          selector = "#addButton",
+          where = "beforeBegin",
+          ui = ui_test_module(id)
+        )
+
+        server_test_module(id)
+  
       })
-      
+
       # output$previewData <- shiny$renderUI({
       #   shiny$req(dataToAnalyze)
       #   data <- dataToAnalyze()
-      #   
+      #
       #   browser()
       #   purrr$map(
       #     data,
@@ -85,8 +78,8 @@ server <- function(id='analysis') {
       #     }
       #   )
       # })
-      # 
-      # 
+      #
+      #
       # output$statsSplitUIaei <- shiny$renderUI({
       #   shiny$req(input$aeistatsSplit)
       #   data <- dataToAnalyze()

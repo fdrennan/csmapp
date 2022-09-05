@@ -65,8 +65,7 @@ get_data <- function() {
       study = stringr$str_extract(path, "/[0-9]{6}/"),
       study = stringr$str_remove_all(study, "/")
     )
-  
-  browser()
+
 
   datamisc_files
 }
