@@ -5,7 +5,7 @@ ui <- function(id) {
   ns <- shiny$NS(id)
   bs4Dash::box(
     id = ns("boxId"),
-    ui_lm$ui(ns(id), data),
+    shiny$uiOutput(ns('server_ui')),
     shiny$actionButton(
       ns("addButton"),
       "",

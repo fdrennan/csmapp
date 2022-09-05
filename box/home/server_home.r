@@ -34,8 +34,6 @@ server <- function(input, output, session) {
         purrr$map(
           unique(metadata$analysis), ui_analysis$ui
         )
-        # ("aei"),
-        # ui_analysis$ui("rgm")
       )
     })
     
@@ -43,7 +41,6 @@ server <- function(input, output, session) {
       metadata$analysis,
       function(x) server_analysis$server(id = x, dataToAnalyze, parentSession = session)
     )
-    # server_analysis$server(id = "rgm", dataToAnalyze, parentSession = session)
   })
 }
 

@@ -6,11 +6,25 @@ server <- function(id, dataToAnalyze, parentSession) {
     id,
     function(input, output, session) {
       ns <- session$ns
-      shiny$observeEvent(input$addButton, {
+      
+      data <- shiny$reactive({
         data <- purrr$keep(dataToAnalyze(), function(x) {
           x$analysis == id
         })
-
+      })
+      
+      
+      output$server_ui <- shiny$renderUI({
+        shiny$req(data())
+        data <- data()
+        ui_lm$ui(ns(id))
+      })
+      server_lm$server(ns(id), parentSession, data)
+      
+      shiny$observeEvent(input$addButton, {
+        
+        data <- data()
+        
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("analysis%s", i)
         shiny$insertUI(
