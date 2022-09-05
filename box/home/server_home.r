@@ -18,7 +18,6 @@ server <- function(input, output, session) {
   })
 
 
-
   shiny$observe({
     shiny$req(dataToAnalyze())
     metadata <- metadata()

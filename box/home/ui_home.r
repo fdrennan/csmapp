@@ -6,7 +6,6 @@ ui <- function() {
   box::use(.. / devop / ui_devop)
 
 
-
   bs4Dash$dashboardPage(
     dark = TRUE,
     header = bs4Dash$dashboardHeader("CSM Management System"),

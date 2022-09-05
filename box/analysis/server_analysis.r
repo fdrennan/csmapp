@@ -24,8 +24,6 @@ server <- function(id, dataToAnalyze, parentSession) {
 
       shiny$observeEvent(input$addButton, {
 
-        # data <- inputData()
-
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("analysis%s", i)
         shiny$insertUI(
@@ -34,18 +32,21 @@ server <- function(id, dataToAnalyze, parentSession) {
           ui = ui_lm$ui(ns(id), data)
         )
         server_lm$server(ns(id), parentSession, inputData)
-        shiny$observeEvent(input[[paste0(id, "-deleteButton")]], {
-          shiny$removeUI(selector = sprintf("#%s", id))
-          remove_shiny_inputs <- function(id, .input) {
-            invisible(
-              lapply(grep(id, names(.input), value = TRUE), function(i) {
-                .subset2(.input, "impl")$.values$remove(i)
-              })
-            )
-          }
-
-          remove_shiny_inputs(id, input)
+        shiny$observeEvent(input$deleteButton, {
+          shiny$showNotification('TODO: Set up delete button')
         })
+        # shiny$observeEvent(input[[ns("deleteButton")]], {
+        #   shiny$removeUI(selector = sprintf("#%s", id))
+        #   remove_shiny_inputs <- function(id, .input) {
+        #     invisible(
+        #       lapply(grep(id, names(.input), value = TRUE), function(i) {
+        #         .subset2(.input, "impl")$.values$remove(i)
+        #       })
+        #     )
+        #   }
+        # 
+        #   remove_shiny_inputs(id, input)
+        # })
       })
     },
     session = parentSession
