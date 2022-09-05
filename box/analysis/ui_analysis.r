@@ -6,11 +6,11 @@ ui <- function(id) {
   bs4Dash::box(
     width = 12,
     id = ns("boxId"), title = id,
-    shiny$uiOutput(ns("server_ui")),
     shiny$actionButton(
       ns("addButton"),
       "",
       icon = shiny$icon("plus")
-    )
+    ),
+    shiny$uiOutput(ns("server_ui"))
   )
 }

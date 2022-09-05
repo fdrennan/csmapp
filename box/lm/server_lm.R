@@ -12,7 +12,7 @@ server <- function(id, parentSession, inputData) {
 
 
   box::use(shiny, cli, bs4Dash, glue, shinyAce, styler)
-  shiny$moduleServer(
+    shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
@@ -36,36 +36,41 @@ server <- function(id, parentSession, inputData) {
           title = id,
           id = environment(ns)[["namespace"]],
           width = 12,
-          shiny$div(class='d-flex justify-content-end',
-            bs4Dash$actionButton(
-              ns("deleteButton"),
-              "", 
-              icon = shiny$icon('x')
-              # status = "warning"
+          bs4Dash$actionButton(
+            ns("deleteButton"),
+            "", 
+            icon = shiny$icon('x')
+          ),
+          shiny$fluidRow(
+            shiny$column(
+              12,
+              shiny$selectizeInput(ns("statsGroupPARAMCD"),
+                                   shiny$h4(glue$glue("PARAMCD")),
+                                   choices = data[[1]]$PARAMCD,
+                                   selected = data[[1]]$PARAMCD, multiple = TRUE
+              ),
+              shiny$numericInput(
+                ns("nStatistics"), "n",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("rStatistics"), "r",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("diff_pospctStatistics"), "diff_pct",
+                min = -Inf, max = Inf, value = 10
+              ),
+              shiny$numericInput(
+                ns("diff_negpctStatistics"), "diff_pct",
+                min = -Inf, max = Inf, value = 10
+              )
+            ),
+            shiny$column(
+              12,
+              shiny$uiOutput(ns("flaggingCode"))
             )
-          ),
-          shiny$selectizeInput(ns("statsGroupPARAMCD"),
-                               shiny$h4(glue$glue("PARAMCD")),
-                               choices = data[[1]]$PARAMCD,
-                               selected = data[[1]]$PARAMCD, multiple = TRUE
-          ),
-          shiny$numericInput(
-            ns("nStatistics"), "n",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("rStatistics"), "r",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("diff_pospctStatistics"), "diff_pct",
-            min = -Inf, max = Inf, value = 10
-          ),
-          shiny$numericInput(
-            ns("diff_negpctStatistics"), "diff_pct",
-            min = -Inf, max = Inf, value = 10
-          ),
-          shiny$uiOutput(ns("flaggingCode"))
+          )
         )
       })
 
