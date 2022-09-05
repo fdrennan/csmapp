@@ -16,10 +16,10 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
         shiny$fluidRow(
           id = environment(ns)[["namespace"]],
-          bs4Dash$box(
+          bs4Dash$box(title = id,
             width = 12,
             shiny$selectizeInput(ns("statsGroupPARAMCD"),
-              glue$glue("Stats Group"),
+              shiny$h4(glue$glue("PARAMCD")),
               choices = data[[1]]$PARAMCD,
               selected = data[[1]]$PARAMCD, multiple = TRUE
             ),
