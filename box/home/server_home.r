@@ -24,20 +24,26 @@ server <- function(input, output, session) {
     metadata <- metadata()
     data <- dataToAnalyze()
     
-    browser()
+    # browser()
     
     output$setupAnalysis <- shiny$renderUI({
       shiny$req(dataToAnalyze())
       bs4Dash$box(
         title = "Review",
         width = 12,
-        ui_analysis$ui("aei"),
-        ui_analysis$ui("rgm")
+        purrr$map(
+          unique(metadata$analysis), ui_analysis$ui
+        )
+        # ("aei"),
+        # ui_analysis$ui("rgm")
       )
     })
     
-    server_analysis$server(id = "aei", dataToAnalyze, parentSession = session)
-    server_analysis$server(id = "rgm", dataToAnalyze, parentSession = session)
+    purrr$walk(
+      metadata$analysis,
+      function(x) server_analysis$server(id = x, dataToAnalyze, parentSession = session)
+    )
+    # server_analysis$server(id = "rgm", dataToAnalyze, parentSession = session)
   })
 }
 
