@@ -6,15 +6,14 @@ server <- function(id, dataToAnalyze, parentSession) {
     id,
     function(input, output, session) {
       ns <- session$ns
-      
+
       inputData <- shiny$reactive({
         shiny$req(dataToAnalyze)
-        browser()
         data <- purrr$keep(dataToAnalyze, function(x) {
           x$analysis == id
         })
       })
-      
+
       output$server_ui <- shiny$renderUI({
         # browser()
         shiny$req(inputData())
@@ -22,11 +21,11 @@ server <- function(id, dataToAnalyze, parentSession) {
         ui_lm$ui(ns(id))
       })
       server_lm$server(ns(id), parentSession, inputData)
-      
+
       shiny$observeEvent(input$addButton, {
-        
+
         # data <- inputData()
-        
+
         i <- sprintf("%04d", input$addButton)
         id <- sprintf("analysis%s", i)
         shiny$insertUI(
@@ -61,47 +60,5 @@ server <- function(id, dataToAnalyze, parentSession) {
 
 #
 #
-#   output$statsSplitUIaei <- shiny$renderUI({
-#     shiny$req(input$aeistatsSplit)
-#     data <- dataToAnalyze()
-#     data <- purrr$keep(data, function(x) {
-#       x$analysis %in% c("aei", "rgv")
-#     })
-#     purrr$map(
-#       1:input$aeistatsSplit,
-#       function(x) {
-#         bs4Dash$box(
-#           width = 12,
-#           shiny$selectizeInput(paste0("aei", x, "statsGroupPARAMCD"),
-#             glue$glue("Stats Group {x}"),
-#             choices = data[[1]]$PARAMCD,
-#             selected = data[[1]]$PARAMCD, multiple = TRUE
-#           ),
-#           shiny$fluidRow(
-#             shiny$column(
-#               6,
-#               shiny$numericInput(paste0("aei", x, "nStatistics"),
-#                 "n",
-#                 min = -Inf, max = Inf, value = 2
-#               )
-#             ),
-#             shiny$column(
-#               6,
-#               shiny$numericInput(paste0("aei", x, "rStatistics"),
-#                 "r",
-#                 min = -Inf, max = Inf, value = 2
-#               )
-#             ),
-#             shiny$column(
-#               6,
-#               shiny$numericInput(paste0("aei", x, "diff_pctStatistics"),
-#                 "diff_pct",
-#                 min = -Inf, max = Inf, value = 10
-#               )
-#             )
-#           )
-#         )
-#       }
-#     )
-#   })
+
 # }

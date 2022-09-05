@@ -33,7 +33,7 @@ server <- function(input, output, session) {
         )
       )
     })
-    
+
     purrr$walk(
       metadata$analysis,
       function(x) server_analysis$server(id = x, data, parentSession = session)
