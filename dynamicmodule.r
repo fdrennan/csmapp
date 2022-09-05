@@ -13,38 +13,37 @@ remove_shiny_inputs <- function(id, .input) {
 }
 
 ui_lm <- function(id) {
-  cli_alert_info('ui_lm id is {id}')
   ns <- shiny::NS(id)
-  h1('Ok hello')
-  # shiny::uiOutput(ns("lmModel"))
+  uiOutput(ns("lmModel"))
 }
 
-server_lm <- function(id) {
-  cli_alert_info('server_lm id is {id}')
+server_lm <- function(id, parentSession) {
   moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
-      output$lmModel <- renderUI({
+      cli_alert_info(ns("lmModel"))
+      output[['lmModel']] <- renderUI({
         tags$div(
           id = environment(ns)[["namespace"]],
-          h1("Hello")
+          div(
+            environment(ns)[["namespace"]]
+          )
         )
       })
-    }
+    }, session = parentSession
   )
 }
 
 ui_dynamic_module <- function(id='dynamic_module') {
   ns <- NS(id)
-  cli_alert_info('ui_dynamic_module id is {id}')
-  fluidPage(
-    actionButton(ns("addButton"), "", icon = icon("plus"))
-  )
+  actionButton(ns("addButton"), "", icon = icon("plus"))
 }
 
-server_dynamic_module <- function(id='dynamic_module') {
-  cli_alert_info('server_dynamic_module id is {id}')
+server_dynamic_module <- function(
+  id='dynamic_module', 
+  parentSession
+) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -56,7 +55,7 @@ server_dynamic_module <- function(id='dynamic_module') {
           where = "beforeBegin",
           ui = ui_lm(id)
         )
-        server_lm(id)
+        server_lm(id, parentSession)
         observeEvent(input[[paste0(id, "-deleteButton")]], {
           removeUI(selector = sprintf("#%s", id))
           remove_shiny_inputs(id, input)
@@ -72,8 +71,8 @@ ui <- function() {
 
 
 
-server <- function(input, output) {
-  server_dynamic_module()
+server <- function(input, output, session) {
+  server_dynamic_module(parentSession = session)
 }
 
 shinyApp(ui = ui, server = server)
