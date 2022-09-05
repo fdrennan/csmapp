@@ -15,7 +15,8 @@ remove_shiny_inputs <- function(id, .input) {
 ui_lm <- function(id) {
   cli_alert_info('ui_lm id is {id}')
   ns <- shiny::NS(id)
-  shiny::uiOutput(ns("lmModel"))
+  h1('Ok hello')
+  # shiny::uiOutput(ns("lmModel"))
 }
 
 server_lm <- function(id) {
