@@ -55,7 +55,7 @@ server <- function(id = "dynamic_module",
           remove_shiny_inputs(id, input)
         })
       })
-    }
+    }, session = parentSession
   )
 }
 

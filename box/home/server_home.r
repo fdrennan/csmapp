@@ -21,6 +21,7 @@ server <- function(input, output, session) {
   })
 
   server_analysis$server(parentSession=session)
+  server_analysis$server('aei', parentSession=session)
 }
 
 
