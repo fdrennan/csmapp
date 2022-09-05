@@ -49,8 +49,12 @@ server <- function(id, parentSession, inputData) {
               shiny$numericInput(
                 ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2
               ),
+            shiny$numericInput(
+              ns("diff_pospctStatistics"), "diff_pct", 
+              min = -Inf, max = Inf, value = 10
+            ),
               shiny$numericInput(
-                ns("diff_pctStatistics"), "diff_pct", 
+                ns("diff_negpctStatistics"), "diff_pct", 
                 min = -Inf, max = Inf, value = 10
               ),
               bs4Dash$actionButton(
@@ -63,12 +67,17 @@ server <- function(id, parentSession, inputData) {
       
       
       output$flaggingCode <- shiny$renderUI({
-        shiny$req(input$diff_pctStatistics)
-        # browser()
+        shiny$req(input$diff_negpctStatistics)
+        nStatistics <- input$nStatistics
+        rStatistics <- input$rStatistics
+        diff_pctStatistics <- input$diff_pctStatistics
+        diff_negpctStatistics <- input$diff_negpctStatistics
+        code <- glue$glue(
+          'if ((abs(diff_pct)/100*{nStatistics}>2 & diff_pct< {diff_negpctStatistics}) & ( p_value<0.05 | r=={rStatistics})) {flag= -1};'
+        )
         
-        shiny$textInput(
-          ns('flagCode'), 'Flag Code', 
-          'if ((abs(diff_pct)/100*n>2 & diff_pct< -10) & ( p_value<0.05 | r==0)) {flag= -1};'
+        shiny$tags$pre(
+          code
         )
       })
     },

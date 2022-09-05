@@ -4,11 +4,11 @@ ui <- function(id, data) {
   ns <- shiny$NS(id)
   shiny$fluidRow(
     shiny$column(
-      6, 
+      4, 
       shiny$uiOutput(ns("lmModel"))
     ),
     shiny$column(
-      6,
+      8,
       shiny$uiOutput(ns('flaggingCode'))
     )
   )
