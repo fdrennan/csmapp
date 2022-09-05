@@ -2,20 +2,37 @@
 
 #' @export
 server <- function(id, parentSession, inputData) {
-  # browser()
+  
+  
+  remove_shiny_inputs <- function(id, .input) {
+    invisible(
+      lapply(grep(id, names(.input), value = TRUE), function(i) {
+        .subset2(.input, "impl")$.values$remove(i)
+      })
+    )
+  }
+  
+  
   box::use(shiny, cli, bs4Dash, glue)
   shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
       cli$cli_alert_info(ns("lmModel"))
+      
+      shiny$observeEvent(input$deleteButton, {
+        browser()
+        shiny$removeUI(selector =  paste0('#',paste0(id, '-lmModel')))
+        remove_shiny_inputs(id, input)
+      })
+      
+      
       output[["lmModel"]] <- shiny$renderUI({
         shiny$req(inputData)
         data <- inputData()
         
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
-        # browser()
         
         shiny$fluidRow(
           id = environment(ns)[["namespace"]],
@@ -27,27 +44,9 @@ server <- function(id, parentSession, inputData) {
               selected = data[[1]]$PARAMCD, multiple = TRUE
             ),
             shiny$fluidRow(
-              shiny$column(
-                6,
-                shiny$numericInput(ns("nStatistics"),
-                  "n",
-                  min = -Inf, max = Inf, value = 2
-                )
-              ),
-              shiny$column(
-                6,
-                shiny$numericInput(ns("rStatistics"),
-                  "r",
-                  min = -Inf, max = Inf, value = 2
-                )
-              ),
-              shiny$column(
-                6,
-                shiny$numericInput(ns("diff_pctStatistics"),
-                  "diff_pct",
-                  min = -Inf, max = Inf, value = 10
-                )
-              )
+              shiny$numericInput(ns("nStatistics"), "n", min = -Inf, max = Inf, value = 2),
+              shiny$numericInput(ns("rStatistics"), "r", min = -Inf, max = Inf, value = 2),
+              shiny$numericInput(ns("diff_pctStatistics"), "diff_pct", min = -Inf, max = Inf, value = 10)
             )
           )
         )

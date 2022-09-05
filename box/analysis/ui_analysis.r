@@ -10,11 +10,6 @@ ui <- function(id) {
       ns("addButton"),
       "",
       icon = shiny$icon("plus")
-    ),
-    shiny$actionButton(
-      ns("deleteButton"),
-      "",
-      icon = shiny$icon("minus")
     )
   )
 }
