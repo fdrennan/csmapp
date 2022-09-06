@@ -189,7 +189,6 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$flaggingPreview <- shiny$renderUI({
-        browser()
         shiny$req(gluedFlagData())
         flagInput <- gluedFlagData()
         shinyAce$aceEditor(
