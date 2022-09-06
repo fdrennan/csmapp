@@ -28,7 +28,7 @@ server <- function(id, dataToAnalyze, parentSession) {
         ui_id <- updateId()
         shiny$insertUI(
           selector = paste0("#", ns("paramSetup")),
-          where = "beforeBegin",
+          where = "beforeEnd",
           ui = ui_lm$ui(ui_id, inputData())
         )
         server_lm$server(ui_id, parentSession, inputData)

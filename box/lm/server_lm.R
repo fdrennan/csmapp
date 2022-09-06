@@ -43,26 +43,19 @@ server <- function(id, parentSession, inputData) {
           },
           shiny$fluidRow(
             shiny$column(
-              6,
+              12,
               shiny$wellPanel(
-                shiny$selectInput(ns("flagValue"), "Flag", choices = c(-1, 0, 1), selected = 1),
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
                   choices = PARAMCD,
                   selected = PARAMCD, multiple = TRUE
                 ),
-                # shiny$tags$hr(),
-                # shiny$textInput(ns("variableName"), label = NULL, placeholder = "Variable Name"),
-                # shiny$div(
-                #   class = "text-right",
-                #   bs4Dash$actionButton(
-                #     ns("addVariable"),
-                #     shiny$tags$em("Add variable")
-                #   )
-                # )
+                shiny$selectInput(
+                  ns("flagValue"), "Flag", choices = c(-1, 0, 1), selected = 1
+                )
               )
             ),
             shiny$column(
-              6, shiny$uiOutput(ns("statisticsSetup"))
+              12, shiny$uiOutput(ns("statisticsSetup"))
             ),
             shiny$column(
               6, shiny$uiOutput(ns("flaggingTemplate"))
@@ -82,7 +75,7 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
         switch(analysis,
           "aei" = {
-            shiny$wellPanel(
+            shiny$fluidRow(class='d-flex justify-content-around',
               shiny$numericInput(
                 ns("n"), "n",
                 min = -Inf, max = Inf, value = 2
@@ -133,18 +126,6 @@ server <- function(id, parentSession, inputData) {
                            fontSize = 14, wordWrap = TRUE, mode = 'r', minLines = 1, maxLines = 5, height = '130px')
       })
 
-      # shiny$observeEvent(input$addVariable, {
-      #   if (input$variableName == "") {
-      #     shiny$showNotification("No variable name supplied", type = "warning")
-      #   }
-      #   shiny$req(input$variableName)
-      #   shiny$insertUI(
-      #     selector = paste0("#", ns("variables")),
-      #     where = "beforeBegin", ui = {
-      #       shiny$numericInput(ns(input$variableName), input$variableName, value = 0)
-      #     }
-      #   )
-      # })
     },
     session = parentSession
   )
