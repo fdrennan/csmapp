@@ -50,15 +50,15 @@ server <- function(id, parentSession, inputData) {
                   choices = PARAMCD,
                   selected = PARAMCD, multiple = TRUE
                 ),
-                shiny$tags$hr(),
-                shiny$textInput(ns("variableName"), label = NULL, placeholder = "Variable Name"),
-                shiny$div(
-                  class = "text-right",
-                  bs4Dash$actionButton(
-                    ns("addVariable"),
-                    shiny$tags$em("Add variable")
-                  )
-                )
+                # shiny$tags$hr(),
+                # shiny$textInput(ns("variableName"), label = NULL, placeholder = "Variable Name"),
+                # shiny$div(
+                #   class = "text-right",
+                #   bs4Dash$actionButton(
+                #     ns("addVariable"),
+                #     shiny$tags$em("Add variable")
+                #   )
+                # )
               )
             ),
             shiny$column(
@@ -93,7 +93,8 @@ server <- function(id, parentSession, inputData) {
               ),
               shiny$numericInput(
                 ns("diff_pct"), "diff_pct",
-                min = -Inf, max = Inf, value = -10
+                min = -Inf, max = Inf, 
+                value = ifelse(input$flagValue==-1, -10, 10)
               ),
               shiny$div(id = ns("variables"))
             )
@@ -103,12 +104,16 @@ server <- function(id, parentSession, inputData) {
 
       output$flaggingTemplate <- shiny$renderUI({
         shiny$req(input$n, input$r, input$diff_pct)
-        flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
+        if (input$flagValue==-1) {
+          flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
+        } else {
+          flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nall(var_1, var_2, var_3);"
+        }
         shiny$div(
           shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
                              fontSize = 14, wordWrap = TRUE, autoComplete = 'enabled', 
-                             minLines = 1, maxLines = 5, height  ='130px'),
-          shiny$div(class='text-right', bs4Dash$actionButton(ns('update'), 'Update'))
+                             minLines = 1, maxLines = 5, height  ='130px')
+          # shiny$div(class='text-right', bs4Dash$actionButton(ns('update'), 'Update'))
         )
       })
 
@@ -128,18 +133,18 @@ server <- function(id, parentSession, inputData) {
                            fontSize = 14, wordWrap = TRUE, mode = 'r', minLines = 1, maxLines = 5, height = '130px')
       })
 
-      shiny$observeEvent(input$addVariable, {
-        if (input$variableName == "") {
-          shiny$showNotification("No variable name supplied", type = "warning")
-        }
-        shiny$req(input$variableName)
-        shiny$insertUI(
-          selector = paste0("#", ns("variables")),
-          where = "beforeBegin", ui = {
-            shiny$numericInput(ns(input$variableName), input$variableName, value = 0)
-          }
-        )
-      })
+      # shiny$observeEvent(input$addVariable, {
+      #   if (input$variableName == "") {
+      #     shiny$showNotification("No variable name supplied", type = "warning")
+      #   }
+      #   shiny$req(input$variableName)
+      #   shiny$insertUI(
+      #     selector = paste0("#", ns("variables")),
+      #     where = "beforeBegin", ui = {
+      #       shiny$numericInput(ns(input$variableName), input$variableName, value = 0)
+      #     }
+      #   )
+      # })
     },
     session = parentSession
   )
