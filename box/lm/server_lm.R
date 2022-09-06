@@ -179,9 +179,7 @@ server <- function(id, parentSession, inputData) {
         )
       })
 
-      gluedFlagData <- shiny$reactive({
-        shiny$req(input$flagInput)
-        shiny$req(input$site_pct)
+      gluedFlagData <- shiny$observeEvent(input$flagInput, {
         flagInput <- with(
           shiny$reactiveValuesToList(input),
           glue$glue(input$flagInput)
