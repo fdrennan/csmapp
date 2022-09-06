@@ -82,25 +82,7 @@ server <- function(id, parentSession, inputData) {
 
       syledCode <- shiny$reactive({
         shiny$req(input$diff_pctStatistics)
-
-        nStatistics <- input$nStatistics
-        diff_pctStatistics <- input$diff_pctStatistics
-        rStatistics <- input$rStatistics
-
-        stats_1 <- glue$glue("(abs(diff_pct)/100 * {nStatistics} > 2)")
-        stats_2 <- glue$glue("(diff_pct < {diff_pctStatistics})")
-        stats_3 <- glue$glue("(p_value<0.05 | r== {rStatistics})")
-        stats_code <- paste0(c(stats_1, stats_2, stats_3), collapse = " &\n")
-        
-        code <-
-          styler$style_text(
-            with(
-              input,
-              glue$glue(
-                "if ({stats_code}) flag = {input$flagValue}"
-              )
-            )
-          )
+        'tbd'
       })
 
 
