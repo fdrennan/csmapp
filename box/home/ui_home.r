@@ -34,7 +34,27 @@ ui <- function() {
       )
     ),
     body = bs4Dash$dashboardBody(
-      shiny$uiOutput("setupAnalysis")
+      bs4Dash$tabItems(
+        bs4Dash$tabItem(
+          tabName = "tab1",
+          bs4Dash$box(
+            title = shiny$h2("Program Configuration Parameters"),
+            width = 12,
+            shiny$h4("Compare Proportion"),
+            shiny$numericInput("T_Zscore", "T_Zscore", min = -Inf, max = Inf, value = 1.68),
+            shiny$numericInput("min_n_number_betabinom", "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
+            shiny$numericInput("min_n_value", "min_n_value", min = -Inf, max = Inf, value = 2),
+            shiny$h4("Tukey"),
+            shiny$selectInput("TukeyOutliers", "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
+            shiny$h4("Dosing Analysis"),
+            shiny$numericInput("cutoff_perplanned", "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
+          )
+        ),
+        bs4Dash$tabItem(
+          tabName = "tab2",
+          shiny$uiOutput('tab2UI')
+        )
+      )
     )
   )
 }
