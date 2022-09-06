@@ -19,6 +19,7 @@ server <- function(input, output, session) {
     box::use(.. / processing)
     shiny$req(metadata())
     data <- processing$make_data_to_analyze(metadata())
+
     data
   })
 
@@ -40,6 +41,14 @@ server <- function(input, output, session) {
       metadata$analysis,
       function(x) server_analysis$server(id = x, data, parentSession = session)
     )
+    
+    bs4Dash$updatebs4TabItems(
+      session = shiny::getDefaultReactiveDomain(),
+      'sidebarMenu',
+      selected = 'tab2'
+    )
+    bs4Dash$updateControlbar('homeControlbar')
+    
   })
 }
 

@@ -21,14 +21,14 @@ ui <- function() {
       disable = FALSE,
       expandOnHover = FALSE,
       collapsed = FALSE,
-      bs4Dash$sidebarMenu(
+      bs4Dash$sidebarMenu(flat = TRUE,
         id = "sidebarMenu",
         bs4Dash$menuItem(
-          text = "Tab 1",
+          text = "Program Configuration Parameters",
           tabName = "tab1"
         ),
         bs4Dash$menuItem(
-          text = "Tab 2",
+          text = "Flagging Setup",
           tabName = "tab2"
         )
       )

@@ -8,6 +8,7 @@ server <- function(id = "metadata") {
       ns <- session$ns
 
       datafiles <- shiny$reactive({
+        shiny$showNotification('Reading cache')
         box::use(.. / caching / cache)
         datafiles <- cache$check()
         datafiles
@@ -17,7 +18,6 @@ server <- function(id = "metadata") {
         shiny$req(datafiles())
         datafiles <- datafiles()
         study <- datafiles$study
-
         shiny$selectizeInput(ns("study"), shiny$h5("Study"),
           choices = study,
           selected = study[1], multiple = FALSE

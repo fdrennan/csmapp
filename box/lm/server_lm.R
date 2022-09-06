@@ -29,7 +29,7 @@ server <- function(id, parentSession, inputData) {
         shiny$div(
           class = "my-3",
           shiny$div(
-            class = "d-flex justify-content-end my-3",
+            class = "d-flex justify-content-around my-3",
             bs4Dash$actionButton(
               ns("deleteButton"), "",
               icon = shiny$icon("x"),

@@ -13,12 +13,14 @@ ui <- function(id, data) {
     shiny$column(
       12,
       shiny$div(
-        class = "d-flex justify-content-end my-3",
+        id='signalUI'
+      ),
+      shiny$div(
+        class = "d-flex justify-content-end my-1",
         shiny$actionButton(
           class = "m-2",
           ns("addButton"),
           "",
-          # shiny$div(class='text-right', "Add Flagging Criteria"),
           style = "height: 3rem;",
           icon = shiny$icon("plus")
         )
