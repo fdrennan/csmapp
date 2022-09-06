@@ -26,8 +26,6 @@ server <- function(id, parentSession, inputData) {
 
 
       output[["lmModel"]] <- shiny$renderUI({
-
-
         shiny$div(
           class = "my-3",
           shiny$div(
@@ -43,50 +41,51 @@ server <- function(id, parentSession, inputData) {
             title = id,
             id = environment(ns)[["namespace"]],
             width = 12,
-            shiny$uiOutput(ns('statisticsSetup'))
+            shiny$uiOutput(ns("statisticsSetup"))
           )
         )
       })
-      
+
       output$statisticsSetup <- shiny$renderUI({
         shiny$req(inputData)
         data <- inputData()
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
-        
+
         shiny$wellPanel(
           shiny$selectizeInput(ns("statsGroupPARAMCD"),
-                               shiny$h4(glue$glue("Signal / Flag Mapper")),
-                               choices = data[[1]]$PARAMCD,
-                               selected = data[[1]]$PARAMCD, multiple = TRUE
+            shiny$h4(glue$glue("Signal / Flag Mapper")),
+            choices = data[[1]]$PARAMCD,
+            selected = data[[1]]$PARAMCD, multiple = TRUE
           ),
           shiny$numericInput(
-            ns("nStatistics"), "n",
+            ns("n"), "n",
             min = -Inf, max = Inf, value = 2
           ),
           shiny$numericInput(
-            ns("rStatistics"), "r",
+            ns("r"), "r",
             min = -Inf, max = Inf, value = 2
           ),
           shiny$numericInput(
-            ns("diff_pctStatistics"), "diff_pct",
+            ns("diff_pct"), "diff_pct",
             min = -Inf, max = Inf, value = 10
           ),
+          shiny$div(id = ns("additionalStatistics")),
+          shiny$actionButton(ns("addVariable"), "Add variable"),
           shiny$numericInput(
-            ns("flagValue"), "Flag",
+            ns("flag"), "Flag",
             min = -5, max = 5, value = 1, step = 1
           ),
-          shiny$actionButton(ns('addVariable'), 'Add variable'),
-          shiny$div(id=ns('additionalStatistics')),
           shiny$textOutput(ns("flaggingCode"))
         )
       })
 
       shiny$observeEvent(input$addVariable, {
+        inputId <- paste0("numericInput", input$addVariable)
         shiny$insertUI(
-          selector = paste0('#', ns('additionalStatistics')),
-          where = 'afterBegin',
-          'Hello'
+          selector = paste0("#", ns("additionalStatistics")),
+          where = "beforeBegin",
+          shiny$numericInput(ns(inputId), inputId, value = 0)
         )
       })
 

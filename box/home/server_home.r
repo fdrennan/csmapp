@@ -31,23 +31,29 @@ server <- function(input, output, session) {
 
 
     output$setupAnalysis <- shiny$renderUI({
-
-      shiny$fluidRow(
-        bs4Dash$box(title='Program Configuration Parameters',
-          width = 12,
-          shiny$h4("Compare Proportion"),
-          shiny$numericInput(ns("T_Zscore"), "T_Zscore", min = -Inf, max = Inf, value = 1.68),
-          shiny$numericInput(ns("min_n_number_betabinom"), "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
-          shiny$numericInput(ns("min_n_value"), "min_n_value", min = -Inf, max = Inf, value = 2),
-          shiny$h4("Tukey"),
-          shiny$selectInput(ns("TukeyOutliers"), "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
-          shiny$h4("Dosing Analysis"),
-          shiny$numericInput(ns("cutoff_perplanned"), "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
+      bs4Dash$tabItems(
+        bs4Dash$tabItem(
+          tabName = "tab1",
+          bs4Dash$box(
+            title = shiny$h2("Program Configuration Parameters"),
+            width = 12,
+            shiny$h4("Compare Proportion"),
+            shiny$numericInput(ns("T_Zscore"), "T_Zscore", min = -Inf, max = Inf, value = 1.68),
+            shiny$numericInput(ns("min_n_number_betabinom"), "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
+            shiny$numericInput(ns("min_n_value"), "min_n_value", min = -Inf, max = Inf, value = 2),
+            shiny$h4("Tukey"),
+            shiny$selectInput(ns("TukeyOutliers"), "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
+            shiny$h4("Dosing Analysis"),
+            shiny$numericInput(ns("cutoff_perplanned"), "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
+          )
         ),
-        purrr$map(
-          unique(metadata$analysis), function(x) {
-            bs4Dash::box(title = paste0('Flagging Setup: ', toupper(x)), width = 12, ui_analysis$ui(x, data))
-          }
+        bs4Dash$tabItem(
+          tabName = "tab2",
+          purrr$map(
+            unique(metadata$analysis), function(x) {
+              bs4Dash::box(title = shiny$h2(paste0("Flagging Setup - ", toupper(x))), width = 12, ui_analysis$ui(x, data))
+            }
+          )
         )
       )
     })
