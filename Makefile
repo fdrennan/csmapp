@@ -7,10 +7,10 @@ style:
 sass:
 	sass www/styles.scss www/styles.css
 
-lazy:
+leave:  
 	git add --all
-	git commit -m 'save'
-	git push
+	git commit -m 'stored and shit'
+	git push origin $$(git rev-parse --abbrev-ref HEAD)
 
 
 
