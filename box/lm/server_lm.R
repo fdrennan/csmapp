@@ -39,7 +39,6 @@ server <- function(id, parentSession, inputData) {
                 bs4Dash$actionButton(
                   ns("deleteButton"), "",
                   icon = shiny$icon("x"),
-                  # class = "btn",
                   style = "height: 3rem;"
                 )
               )
