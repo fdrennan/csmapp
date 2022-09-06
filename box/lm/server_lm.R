@@ -2,6 +2,51 @@
 
 #' @export
 server <- function(id, parentSession, inputData) {
+  analysis_flagging <- function(analysis) {
+    switch(analysis,
+      "aei" = {
+        inputs <- shiny$fluidRow(
+          class = "d-flex justify-content-around",
+          shiny$numericInput(
+            ns("n"), "n",
+            min = -Inf, max = Inf, value = 2
+          ),
+          shiny$numericInput(
+            ns("r"), "r",
+            min = -Inf, max = Inf, value = 2
+          ),
+          shiny$numericInput(
+            ns("diff_pct"), "diff_pct",
+            min = -Inf, max = Inf,
+            value = ifelse(input$flagValue == -1, -10, 10)
+          ),
+          shiny$div(id = ns("variables"))
+        )
+
+        if (input$flagValue == -1) {
+          flag_crit <- c(
+            "var_1 <- abs(diff_pct)/100*n>{n}",
+            "var_2 <- diff_pct<{diff_pct}",
+            "var_3 <- p_value < 0.05  | r=={r}",
+            "all(var_1 & var_2, var_3);"
+          )
+        } else {
+          flag_crit <- c(
+            "var_1 <- abs(diff_pct)/100*n>{n}",
+            "var_2 <- diff_pct>{diff_pct}",
+            "var_3 <- p_value < 0.05  | r=={r}",
+            "all(var_1 & var_2, var_3);"
+          )
+        }
+
+        list(
+          inputs = inputs,
+          flag_crit = paste0(flag_crit, sep = "\n")
+        )
+      }
+    )
+  }
+
   remove_shiny_inputs <- function(id, .input) {
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
@@ -46,7 +91,8 @@ server <- function(id, parentSession, inputData) {
           },
           shiny$fluidRow(
             shiny$column(
-              6, offset = 3,
+              6,
+              offset = 3,
               shiny$wellPanel(
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
                   choices = PARAMCD,
@@ -70,38 +116,7 @@ server <- function(id, parentSession, inputData) {
         shiny$req(inputData())
         data <- inputData()
         analysis <- data[[1]]$analysis
-        switch(analysis,
-          "aei" = {
-            inputs <- shiny$fluidRow(
-              class = "d-flex justify-content-around",
-              shiny$numericInput(
-                ns("n"), "n",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("r"), "r",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("diff_pct"), "diff_pct",
-                min = -Inf, max = Inf,
-                value = ifelse(input$flagValue == -1, -10, 10)
-              ),
-              shiny$div(id = ns("variables"))
-            )
-
-            if (input$flagValue == -1) {
-              flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
-            } else {
-              flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nall(var_1, var_2, var_3);"
-            }
-
-            list(
-              inputs = inputs,
-              flag_crit = flag_crit
-            )
-          }
-        )
+        analysis_flagging(analysis)
       })
 
       output$statisticsSetup <- shiny$renderUI({

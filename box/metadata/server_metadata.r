@@ -8,7 +8,6 @@ server <- function(id = "metadata") {
       ns <- session$ns
 
       datafiles <- shiny$reactive({
-        shiny$showNotification("Reading cache")
         box::use(.. / caching / cache)
         datafiles <- cache$check()
         datafiles
