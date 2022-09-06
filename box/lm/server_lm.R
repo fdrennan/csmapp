@@ -35,12 +35,14 @@ server <- function(id, parentSession, inputData) {
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
-            shiny$div(class='text-center', 
-                      bs4Dash$actionButton(
-                        ns("deleteButton"), "",
-                        icon = shiny$icon("x")
-                        # style = "height: 3rem;"
-                      ))
+            shiny$div(
+              class = "text-center",
+              bs4Dash$actionButton(
+                ns("deleteButton"), "",
+                icon = shiny$icon("x")
+                # style = "height: 3rem;"
+              )
+            )
           },
           shiny$fluidRow(
             shiny$column(
@@ -51,63 +53,78 @@ server <- function(id, parentSession, inputData) {
                   selected = PARAMCD, multiple = TRUE
                 ),
                 shiny$selectInput(
-                  ns("flagValue"), "Flag", choices = c(-1, 0, 1), selected = 1
+                  ns("flagValue"), "Flag",
+                  choices = c(-1, 0, 1), selected = 1
                 )
               )
             ),
-            shiny$column(
-              12, shiny$uiOutput(ns("statisticsSetup"))
-            ),
-            shiny$column(
-              6, shiny$uiOutput(ns("flaggingTemplate"))
-            ),
-            shiny$column(
-              6, shiny$uiOutput(ns("flaggingPreview"))
-            )
+            shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
+            shiny$column(6, shiny$uiOutput(ns("flaggingTemplate"))),
+            shiny$column(6, shiny$uiOutput(ns("flaggingPreview")))
           )
+        )
+      })
+
+
+      flaggingFilter <- shiny$reactive({
+        shiny$req(inputData())
+        data <- inputData()
+        analysis <- data[[1]]$analysis
+        switch(analysis,
+          "aei" = {
+            if (input$flagValue == -1) {
+              flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
+            } else {
+              flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nall(var_1, var_2, var_3);"
+            }
+
+            list(
+              inputs = {
+                shiny$fluidRow(
+                  class = "d-flex justify-content-around",
+                  shiny$numericInput(
+                    ns("n"), "n",
+                    min = -Inf, max = Inf, value = 2
+                  ),
+                  shiny$numericInput(
+                    ns("r"), "r",
+                    min = -Inf, max = Inf, value = 2
+                  ),
+                  shiny$numericInput(
+                    ns("diff_pct"), "diff_pct",
+                    min = -Inf, max = Inf,
+                    value = ifelse(input$flagValue == -1, -10, 10)
+                  ),
+                  shiny$div(id = ns("variables"))
+                )
+              },
+              flag_crit = flag_crit
+            )
+          }
         )
       })
 
 
       output$statisticsSetup <- shiny$renderUI({
         shiny$req(input$flagValue)
+        shiny$req(flaggingFilter())
         data <- inputData()
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
         switch(analysis,
-          "aei" = {
-            shiny$fluidRow(class='d-flex justify-content-around',
-              shiny$numericInput(
-                ns("n"), "n",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("r"), "r",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("diff_pct"), "diff_pct",
-                min = -Inf, max = Inf, 
-                value = ifelse(input$flagValue==-1, -10, 10)
-              ),
-              shiny$div(id = ns("variables"))
-            )
-          }
+          "aei" = flaggingFilter()$inputs
         )
       })
 
       output$flaggingTemplate <- shiny$renderUI({
         shiny$req(input$n, input$r, input$diff_pct)
-        if (input$flagValue==-1) {
-          flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
-        } else {
-          flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nall(var_1, var_2, var_3);"
-        }
+
         shiny$div(
-          shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
-                             fontSize = 14, wordWrap = TRUE, autoComplete = 'enabled', 
-                             minLines = 1, maxLines = 5, height  ='130px')
-          # shiny$div(class='text-right', bs4Dash$actionButton(ns('update'), 'Update'))
+          shinyAce$aceEditor(
+            outputId = ns("flagInput"), value = flaggingFilter()$flag_crit, theme = "chaos",
+            fontSize = 14, wordWrap = TRUE, autoComplete = "enabled",
+            minLines = 1, maxLines = 5, height = "130px"
+          )
         )
       })
 
@@ -119,14 +136,15 @@ server <- function(id, parentSession, inputData) {
           glue$glue(input$flagInput)
         )
       })
-      
+
       output$flaggingPreview <- shiny$renderUI({
         shiny$req(gluedFlagData())
         flagInput <- gluedFlagData()
-        shinyAce$aceEditor(outputId = ns('flag'), value = flagInput, theme = 'chaos',
-                           fontSize = 14, wordWrap = TRUE, mode = 'r', minLines = 1, maxLines = 5, height = '130px')
+        shinyAce$aceEditor(
+          outputId = ns("flag"), value = flagInput, theme = "chaos",
+          fontSize = 14, wordWrap = TRUE, mode = "r", minLines = 1, maxLines = 5, height = "130px"
+        )
       })
-
     },
     session = parentSession
   )
