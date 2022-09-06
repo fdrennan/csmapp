@@ -39,7 +39,7 @@ ui <- function() {
     ),
     body = bs4Dash$dashboardBody(
       bs4Dash$tabItems(
-        bs4Dash$tabItem(tabName = 'tab0', shiny$h2('Centralized Statistical Monitoring', class='text-display')),
+        bs4Dash$tabItem(tabName = "tab0", shiny$h2("Centralized Statistical Monitoring", class = "text-display")),
         bs4Dash$tabItem(
           tabName = "tab1",
           bs4Dash$box(
