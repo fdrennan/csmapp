@@ -99,8 +99,8 @@ server <- function(id, parentSession, inputData) {
         )
 
         out$inputs <- shiny$fluidRow(
-          out$inputs, 
-          shiny$div(class='text-right', bs4Dash$actionButton(ns("updateStats"), "Update"))
+          out$inputs,
+          shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Update"))
         )
         out
       }
