@@ -76,31 +76,26 @@ server <- function(id, parentSession, inputData) {
             ns("flagValue"), "Flag",
             min = -5, max = 5, value = 1, step = 1
           ),
+          shiny$actionButton(ns('addVariable'), 'Add variable'),
+          shiny$div(id=ns('additionalStatistics')),
           shiny$textOutput(ns("flaggingCode"))
         )
       })
 
-      syledCode <- shiny$reactive({
-        shiny$req(input$diff_pctStatistics)
-        'tbd'
+      shiny$observeEvent(input$addVariable, {
+        shiny$insertUI(
+          selector = paste0('#', ns('additionalStatistics')),
+          where = 'afterBegin',
+          'Hello'
+        )
       })
 
 
-      output$flaggingCode <- shiny$renderText({
-        shiny$req(syledCode())
-        code <- syledCode()
-        code
-        # shinyAce$aceEditor(
-        #   outputId = ns("ace"),
-        #   theme = "chaos",
-        #   mode = "r",
-        #   fontSize = 18,
-        #   autoScrollEditorIntoView = TRUE,
-        #   minLines = 5,
-        #   maxLines = 30,
-        #   value = code
-        # )
-      })
+      # output$flaggingCode <- shiny$renderText({
+      #   shiny$req(syledCode())
+      #   code <- syledCode()
+      #   code
+      # })
     },
     session = parentSession
   )
