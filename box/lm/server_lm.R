@@ -103,7 +103,6 @@ server <- function(id, parentSession, inputData) {
 
       output$flaggingTemplate <- shiny$renderUI({
         shiny$req(input$n, input$r, input$diff_pct)
-        browser()
         flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
         shiny$div(
           shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
@@ -113,8 +112,9 @@ server <- function(id, parentSession, inputData) {
         )
       })
 
-      gluedFlagData <- shiny$eventReactive(input$update, {
-        # shiny$isolate(input)
+      gluedFlagData <- shiny$reactive({
+        input$update
+        shiny$isolate(input)
         flagInput <- with(
           shiny$reactiveValuesToList(input),
           glue$glue(input$flagInput)
