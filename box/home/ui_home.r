@@ -21,7 +21,7 @@ ui <- function() {
       expandOnHover = FALSE,
       collapsed = FALSE,
       bs4Dash$sidebarMenu(
-        flat = TRUE,
+        flat = FALSE,
         id = "sidebarMenu",
         bs4Dash$menuItem(
           text = "Welcome",
