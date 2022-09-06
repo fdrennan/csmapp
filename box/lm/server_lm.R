@@ -46,7 +46,7 @@ server <- function(id, parentSession, inputData) {
           },
           shiny$fluidRow(
             shiny$column(
-              12,
+              6, offset = 3,
               shiny$wellPanel(
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
                   choices = PARAMCD,
@@ -72,7 +72,6 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
         switch(analysis,
           "aei" = {
-            
             inputs <- shiny$fluidRow(
               class = "d-flex justify-content-around",
               shiny$numericInput(
@@ -90,7 +89,7 @@ server <- function(id, parentSession, inputData) {
               ),
               shiny$div(id = ns("variables"))
             )
-            
+
             if (input$flagValue == -1) {
               flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
             } else {
@@ -104,7 +103,6 @@ server <- function(id, parentSession, inputData) {
           }
         )
       })
-
 
       output$statisticsSetup <- shiny$renderUI({
         shiny$req(input$flagValue)

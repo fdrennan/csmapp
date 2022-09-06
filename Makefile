@@ -7,7 +7,7 @@ style:
 sass:
 	sass www/styles.scss www/styles.css
 
-leave:  
+push:  
 	git add --all
 	git commit -m 'stored and shit'
 	git push origin $$(git rev-parse --abbrev-ref HEAD)
