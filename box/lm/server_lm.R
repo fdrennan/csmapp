@@ -24,8 +24,12 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$lmModel <- shiny$renderUI({
+        shiny$req(inputData)
         card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
         card_name <- paste0("Flagging Criteria ", card_number)
+        data <- inputData()
+        PARAMCD <- data[[1]]$PARAMCD
+        analysis <- data[[1]]$analysis
         bs4Dash$bs4Card(
           title = shiny$h3(card_name),
           id = environment(ns)[["namespace"]],
@@ -37,8 +41,26 @@ server <- function(id, parentSession, inputData) {
               # style = "height: 3rem;"
             )
           },
-          shiny$selectInput(ns("flagValue"), "Flag", choices = c(-1, 0, 1), selected = 1),
-          shiny$uiOutput(ns("statisticsSetup"))
+          shiny$fluidRow(
+            shiny$column(
+              6,
+              shiny$wellPanel(
+                shiny$selectInput(ns('flagValue'), 'Flag', choices = c(-1, 0, 1), selected = 1),
+                shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
+                                     choices = PARAMCD,
+                                     selected = PARAMCD, multiple = TRUE
+                ),
+                shiny$tags$hr(),
+                shiny$textInput(ns("variableName"), label=NULL, placeholder = 'Variable Name'),
+                shiny$div(class = "text-right", 
+                          bs4Dash$actionButton(ns("addVariable"), 
+                                               shiny$tags$em("Add variable")))
+              )
+            ), 
+            shiny$column(
+              6, shiny$uiOutput(ns("statisticsSetup"))
+            )
+          )
         )
       })
 
@@ -48,54 +70,33 @@ server <- function(id, parentSession, inputData) {
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
 
-        shiny$fluidRow(
-          shiny$column(
-            6,
+        switch(
+          analysis,
+          'aei' = {
+            browser()
+            currentFlag <- input$flag
             shiny$wellPanel(
-              shiny$h3("Select PARAMCD"),
-              shiny$selectizeInput(ns("statsGroupPARAMCD"), "",
-                choices = data[[1]]$PARAMCD,
-                selected = data[[1]]$PARAMCD, multiple = TRUE
-              )
+              shiny$numericInput(
+                ns("nStatistics"), "n",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("rStatistics"), "r",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("diff_pctStatistics"), "diff_pct",
+                min = -Inf, max = Inf, value = 10
+              ),
+              shiny$div(id = ns("variables"))
             )
-          ),
-          shiny$column(
-            6,
-            shiny$h3("Statistics"),
-            switch(analysis,
-              "aei" = {
-                shiny$wellPanel(
-                  shiny$numericInput(
-                    ns("nStatistics"), "n",
-                    min = -Inf, max = Inf, value = 2
-                  ),
-                  shiny$numericInput(
-                    ns("rStatistics"), "r",
-                    min = -Inf, max = Inf, value = 2
-                  ),
-                  shiny$numericInput(
-                    ns("diff_pctStatistics"), "diff_pct",
-                    min = -Inf, max = Inf, value = 10
-                  ),
-                  shiny$div(id = ns("variables")),
-                  shiny$textInput(ns("variableName"), label = NULL, placeholder = "Variable Name"),
-                  shiny$div(
-                    class = "text-right",
-                    bs4Dash$actionButton(
-                      ns("addVariable"),
-                      shiny$tags$em("Add variable")
-                    )
-                  )
-                )
-              }
-            )
-          )
+          }
         )
       })
 
       shiny$observeEvent(input$addVariable, {
-        if (input$variableName == "") {
-          shiny$showNotification("No variable name supplied", type = "warning")
+        if (input$variableName=='') {
+          shiny$showNotification('No variable name supplied', type ='warning')
         }
         shiny$req(input$variableName)
         shiny$insertUI(
@@ -105,6 +106,7 @@ server <- function(id, parentSession, inputData) {
           }
         )
       })
+      
     },
     session = parentSession
   )
