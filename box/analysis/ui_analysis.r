@@ -1,6 +1,6 @@
 #' @export
 ui <- function(id, data) {
-  # browser()
+  # 
   box::use(shiny)
   box::use(shiny, cli, .. / lm / ui_lm)
   ns <- shiny$NS(id)

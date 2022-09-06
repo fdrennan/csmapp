@@ -5,7 +5,7 @@ server <- function(input, output, session) {
     glue, purrr, readr, haven, htmlTable, bs4Dash,
     .. / analysis / server_analysis
   )
-  # browser()
+  # 
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
   server_devop$server()
@@ -24,7 +24,7 @@ server <- function(input, output, session) {
     metadata <- metadata()
     data <- dataToAnalyze()
 
-    browser()
+    
     
     output$setupAnalysis <- shiny$renderUI({
       purrr$map(
