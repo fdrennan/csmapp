@@ -5,12 +5,11 @@ ui <- function(id, data) {
   box::use(shiny, cli, bs4Dash)
   ns <- shiny$NS(id)
   shiny$fluidRow(
-    shiny$fluidRow(class='d-flex justify-content-around', 
-                   id = ns("paramSetup")),
+    shiny$div(id = ns("paramSetup")),
     shiny$column(
       12,
       shiny$div(
-        class = "text-right",
+        class = "text-center",
         bs4Dash$actionButton(
           ns("addButton"),
           "",

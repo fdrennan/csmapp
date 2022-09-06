@@ -35,11 +35,12 @@ server <- function(id, parentSession, inputData) {
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
-            bs4Dash$actionButton(
-              ns("deleteButton"), "",
-              icon = shiny$icon("x", class = "text-right")
-              # style = "height: 3rem;"
-            )
+            shiny$div(class='text-center', 
+                      bs4Dash$actionButton(
+                        ns("deleteButton"), "",
+                        icon = shiny$icon("x")
+                        # style = "height: 3rem;"
+                      ))
           },
           shiny$fluidRow(
             shiny$column(
