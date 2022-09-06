@@ -7,3 +7,10 @@ style:
 sass:
 	sass www/styles.scss www/styles.css
 
+lazy:
+	git add --all
+	git commit -m 'save'
+	git push
+
+
+
