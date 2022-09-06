@@ -1,21 +1,16 @@
 #' @export
 ui <- function(id, data) {
   #
-  box::use(shiny)
-  box::use(shiny, cli, .. / lm / ui_lm)
+  box::use(.. / lm / ui_lm)
+  box::use(shiny, cli, bs4Dash)
   ns <- shiny$NS(id)
   shiny$fluidRow(
-    shiny$column(
-      12,
-      shiny$uiOutput(ns("server_ui"))
-    ),
     shiny$div(id = ns("paramSetup")),
     shiny$column(
       12,
       shiny$div(
-        class = "d-flex justify-content-end my-1",
-        shiny$actionButton(
-          class = "m-2",
+        class = "text-right",
+        bs4Dash$actionButton(
           ns("addButton"),
           "",
           style = "height: 3rem;",

@@ -11,7 +11,7 @@ server <- function(id, parentSession, inputData) {
   }
 
 
-  box::use(shiny, cli, bs4Dash, glue, shinyAce, styler)
+  box::use(shiny, cli, bs4Dash, glue, shinyAce, stringr, styler)
   shiny$moduleServer(
     id,
     function(input, output, session) {
@@ -26,18 +26,17 @@ server <- function(id, parentSession, inputData) {
 
 
       output[["lmModel"]] <- shiny$renderUI({
+        card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
+        card_name <- paste0("Flagging Criteria ", card_number)
         shiny$div(
           class = "my-3",
-          # shiny$div(
-          #   class = "d-flex justify-content-end my-3",
-          #   
-          # ),
           bs4Dash$bs4Card(
-            title = id,
+            title = card_name,
             id = environment(ns)[["namespace"]],
             width = 12,
             footer = {
-              shiny$div(class='d-flex justify-content-end',
+              shiny$div(
+                class = "d-flex justify-content-end",
                 bs4Dash$actionButton(
                   ns("deleteButton"), "",
                   icon = shiny$icon("x"),

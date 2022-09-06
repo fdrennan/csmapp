@@ -32,7 +32,7 @@ server <- function(input, output, session) {
       metadata <- metadata()
       purrr$map(
         unique(metadata$analysis), function(x) {
-          bs4Dash::box(title = shiny$h2(paste0("Flagging Setup - ", toupper(x))), width = 12, ui_analysis$ui(x, data))
+          bs4Dash::box(title = toupper(x), width = 12, ui_analysis$ui(x, data))
         }
       )
     })
@@ -41,14 +41,13 @@ server <- function(input, output, session) {
       metadata$analysis,
       function(x) server_analysis$server(id = x, data, parentSession = session)
     )
-    
+
     bs4Dash$updatebs4TabItems(
       session = shiny::getDefaultReactiveDomain(),
-      'sidebarMenu',
-      selected = 'tab2'
+      "sidebarMenu",
+      selected = "tab2"
     )
-    bs4Dash$updateControlbar('homeControlbar')
-    
+    bs4Dash$updateControlbar("homeControlbar")
   })
 }
 

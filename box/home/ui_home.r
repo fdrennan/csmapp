@@ -20,7 +20,8 @@ ui <- function() {
       disable = FALSE,
       expandOnHover = FALSE,
       collapsed = FALSE,
-      bs4Dash$sidebarMenu(flat = TRUE,
+      bs4Dash$sidebarMenu(
+        flat = TRUE,
         id = "sidebarMenu",
         bs4Dash$menuItem(
           text = "Program Configuration Parameters",
@@ -51,7 +52,7 @@ ui <- function() {
         ),
         bs4Dash$tabItem(
           tabName = "tab2",
-          shiny$uiOutput('tab2UI')
+          shiny$uiOutput("tab2UI")
         )
       )
     )

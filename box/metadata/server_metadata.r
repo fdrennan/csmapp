@@ -8,7 +8,7 @@ server <- function(id = "metadata") {
       ns <- session$ns
 
       datafiles <- shiny$reactive({
-        shiny$showNotification('Reading cache')
+        shiny$showNotification("Reading cache")
         box::use(.. / caching / cache)
         datafiles <- cache$check()
         datafiles
@@ -62,7 +62,7 @@ server <- function(id = "metadata") {
             choices = analysis,
             selected = analysis, multiple = TRUE
           ),
-          shiny$div(class='text-center', bs4Dash$actionButton(ns("go"), shiny$h5("Import Study")))
+          shiny$div(class = "text-center", bs4Dash$actionButton(ns("go"), shiny$h5("Import Study")))
         )
       })
 
