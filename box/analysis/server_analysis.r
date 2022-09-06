@@ -1,6 +1,6 @@
 #' @export
 server <- function(id, dataToAnalyze, parentSession) {
-  # 
+  #
   box::use(shiny, cli, .. / lm / server_lm)
   box::use(shiny, cli, .. / lm / ui_lm, purrr)
 
@@ -26,7 +26,6 @@ server <- function(id, dataToAnalyze, parentSession) {
         shiny$req(updateId())
         shiny$req(inputData())
         ui_id <- updateId()
-        # 
         shiny$insertUI(
           selector = paste0("#", ns("paramSetup")),
           where = "beforeBegin",

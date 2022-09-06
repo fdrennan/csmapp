@@ -33,13 +33,13 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
 
         shiny$div(
-          class='my-3',
+          class = "my-3",
           shiny$div(
-            class='d-flex justify-content-end my-3',
+            class = "d-flex justify-content-end my-3",
             bs4Dash$actionButton(
-              ns("deleteButton"),"",
+              ns("deleteButton"), "",
               icon = shiny$icon("x"),
-              # class = "btn", 
+              # class = "btn",
               style = "height: 3rem;"
             )
           ),
@@ -49,9 +49,9 @@ server <- function(id, parentSession, inputData) {
             width = 12,
             shiny$wellPanel(
               shiny$selectizeInput(ns("statsGroupPARAMCD"),
-                                   shiny$h4(glue$glue("Signal / Flag Mapper")),
-                                   choices = data[[1]]$PARAMCD,
-                                   selected = data[[1]]$PARAMCD, multiple = TRUE
+                shiny$h4(glue$glue("Signal / Flag Mapper")),
+                choices = data[[1]]$PARAMCD,
+                selected = data[[1]]$PARAMCD, multiple = TRUE
               ),
               shiny$numericInput(
                 ns("nStatistics"), "n",
@@ -86,7 +86,7 @@ server <- function(id, parentSession, inputData) {
         stats_2 <- glue$glue("(diff_pct < {diff_pctStatistics})")
         stats_3 <- glue$glue("(p_value<0.05 | r== {rStatistics})")
         stats_code <- paste0(c(stats_1, stats_2, stats_3), collapse = " &\n")
-        # 
+        #
         code <-
           styler$style_text(
             with(
@@ -98,7 +98,7 @@ server <- function(id, parentSession, inputData) {
           )
       })
 
-      
+
       output$flaggingCode <- shiny$renderUI({
         shiny$req(syledCode())
         code <- syledCode()
@@ -113,8 +113,6 @@ server <- function(id, parentSession, inputData) {
           value = code
         )
       })
-      
-      
     },
     session = parentSession
   )
