@@ -32,39 +32,45 @@ server <- function(id, parentSession, inputData) {
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
 
-        bs4Dash$bs4Card(
-          title = id,
-          id = environment(ns)[["namespace"]],
-          width = 12,
-          shiny$wellPanel(
-            shiny$selectizeInput(ns("statsGroupPARAMCD"),
-                                 shiny$h4(glue$glue("Signal / Flag Mapper")),
-                                 choices = data[[1]]$PARAMCD,
-                                 selected = data[[1]]$PARAMCD, multiple = TRUE
-            ),
+        shiny$div(
+          class='my-3',
+          shiny$div(
+            class='d-flex justify-content-end my-3',
             bs4Dash$actionButton(
-              ns("deleteButton"),
-              "",
+              ns("deleteButton"),"",
               icon = shiny$icon("x"),
-              class = "btn", style = "height: 3rem;"
-            ),
-            shiny$numericInput(
-              ns("nStatistics"), "n",
-              min = -Inf, max = Inf, value = 2
-            ),
-            shiny$numericInput(
-              ns("rStatistics"), "r",
-              min = -Inf, max = Inf, value = 2
-            ),
-            shiny$numericInput(
-              ns("diff_pctStatistics"), "diff_pct",
-              min = -Inf, max = Inf, value = 10
-            ),
-            shiny$numericInput(
-              ns("flagValue"), "Flag",
-              min = -5, max = 5, value = 1, step = 1
-            ),
-            shiny$uiOutput(ns("flaggingCode"))
+              # class = "btn", 
+              style = "height: 3rem;"
+            )
+          ),
+          bs4Dash$bs4Card(
+            title = id,
+            id = environment(ns)[["namespace"]],
+            width = 12,
+            shiny$wellPanel(
+              shiny$selectizeInput(ns("statsGroupPARAMCD"),
+                                   shiny$h4(glue$glue("Signal / Flag Mapper")),
+                                   choices = data[[1]]$PARAMCD,
+                                   selected = data[[1]]$PARAMCD, multiple = TRUE
+              ),
+              shiny$numericInput(
+                ns("nStatistics"), "n",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("rStatistics"), "r",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("diff_pctStatistics"), "diff_pct",
+                min = -Inf, max = Inf, value = 10
+              ),
+              shiny$numericInput(
+                ns("flagValue"), "Flag",
+                min = -5, max = 5, value = 1, step = 1
+              ),
+              shiny$uiOutput(ns("flaggingCode"))
+            )
           )
         )
       })
@@ -92,6 +98,7 @@ server <- function(id, parentSession, inputData) {
           )
       })
 
+      
       output$flaggingCode <- shiny$renderUI({
         shiny$req(syledCode())
         code <- syledCode()
@@ -99,13 +106,15 @@ server <- function(id, parentSession, inputData) {
           outputId = ns("ace"),
           theme = "chaos",
           mode = "r",
-          fontSize = 20,
+          fontSize = 18,
           autoScrollEditorIntoView = TRUE,
           minLines = 5,
           maxLines = 30,
           value = code
         )
       })
+      
+      
     },
     session = parentSession
   )
