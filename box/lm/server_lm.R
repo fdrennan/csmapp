@@ -24,7 +24,6 @@ server <- function(id, parentSession, inputData) {
         remove_shiny_inputs(id, input)
       })
 
-
       output[["lmModel"]] <- shiny$renderUI({
         card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
         card_name <- paste0("Flagging Criteria ", card_number)
@@ -36,7 +35,7 @@ server <- function(id, parentSession, inputData) {
             width = 12,
             footer = {
               shiny$div(
-                class = "d-flex justify-content-end",
+                class = "text=right",
                 bs4Dash$actionButton(
                   ns("deleteButton"), "",
                   icon = shiny$icon("x"),
@@ -57,48 +56,32 @@ server <- function(id, parentSession, inputData) {
         analysis <- data[[1]]$analysis
 
         shiny$wellPanel(
-          shiny$selectizeInput(ns("statsGroupPARAMCD"),
-            shiny$h4(glue$glue("Signal / Flag Mapper")),
-            choices = data[[1]]$PARAMCD,
-            selected = data[[1]]$PARAMCD, multiple = TRUE
+          shiny$h3('Select PARAMCD'),
+          shiny$selectizeInput(ns("statsGroupPARAMCD"),"",
+                               # shiny$h4(glue$glue("Select PARAMCD")),
+                               choices = data[[1]]$PARAMCD,
+                               selected = data[[1]]$PARAMCD, multiple = TRUE
           ),
-          shiny$numericInput(
-            ns("n"), "n",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("r"), "r",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("diff_pct"), "diff_pct",
-            min = -Inf, max = Inf, value = 10
-          ),
-          # shiny$div(id = ns("additionalStatistics")),
-          shiny$actionButton(ns("addVariable"), "Add variable"),
-          shiny$numericInput(
-            ns("flag"), "Flag",
-            min = -5, max = 5, value = 1, step = 1
-          ),
+          shiny$tags$hr(),
+          shiny$textInput(ns('variableName'), 'Variable Name'),
+          shiny$div(class='text-right', bs4Dash$actionButton(ns("addVariable"), "Add variable")),
+          shiny$tags$hr(),
+          shiny$div(id=ns('variables')),
           shiny$textOutput(ns("flaggingCode"))
         )
       })
 
       shiny$observeEvent(input$addVariable, {
-        inputId <- paste0("numericInput", input$addVariable)
         shiny$insertUI(
-          selector = paste0("#", ns("addVariable")),
-          where = "beforeBegin",
-          shiny$numericInput(ns(inputId), inputId, value = 0)
+          selector = paste0("#", ns("variables")),
+          where = "beforeBegin",ui = {
+            shiny$wellPanel(
+              shiny$numericInput(ns(input$variableName), input$variableName, value = 0)
+            )
+          }
         )
       })
 
-
-      # output$flaggingCode <- shiny$renderText({
-      #   shiny$req(syledCode())
-      #   code <- syledCode()
-      #   code
-      # })
     },
     session = parentSession
   )
