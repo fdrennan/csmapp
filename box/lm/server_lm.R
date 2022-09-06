@@ -2,51 +2,6 @@
 
 #' @export
 server <- function(id, parentSession, inputData) {
-  analysis_flagging <- function(analysis) {
-    switch(analysis,
-      "aei" = {
-        inputs <- shiny$fluidRow(
-          class = "d-flex justify-content-around",
-          shiny$numericInput(
-            ns("n"), "n",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("r"), "r",
-            min = -Inf, max = Inf, value = 2
-          ),
-          shiny$numericInput(
-            ns("diff_pct"), "diff_pct",
-            min = -Inf, max = Inf,
-            value = ifelse(input$flagValue == -1, -10, 10)
-          ),
-          shiny$div(id = ns("variables"))
-        )
-
-        if (input$flagValue == -1) {
-          flag_crit <- c(
-            "var_1 <- abs(diff_pct)/100*n>{n}",
-            "var_2 <- diff_pct<{diff_pct}",
-            "var_3 <- p_value < 0.05  | r=={r}",
-            "all(var_1 & var_2, var_3);"
-          )
-        } else {
-          flag_crit <- c(
-            "var_1 <- abs(diff_pct)/100*n>{n}",
-            "var_2 <- diff_pct>{diff_pct}",
-            "var_3 <- p_value < 0.05  | r=={r}",
-            "all(var_1 & var_2, var_3);"
-          )
-        }
-
-        list(
-          inputs = inputs,
-          flag_crit = paste0(flag_crit, sep = "\n")
-        )
-      }
-    )
-  }
-
   remove_shiny_inputs <- function(id, .input) {
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
@@ -61,6 +16,88 @@ server <- function(id, parentSession, inputData) {
     id,
     function(input, output, session) {
       ns <- session$ns
+
+      analysis_flagging <- function(analysis) {
+        switch(analysis,
+          "aei" = {
+            inputs <- shiny$fluidRow(
+              class = "d-flex justify-content-around",
+              shiny$numericInput(
+                ns("n"), "n",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("r"), "r",
+                min = -Inf, max = Inf, value = 2
+              ),
+              shiny$numericInput(
+                ns("diff_pct"), "diff_pct",
+                min = -Inf, max = Inf,
+                value = ifelse(input$flagValue == -1, -10, 10)
+              ),
+              shiny$div(id = ns("variables"))
+            )
+
+            if (input$flagValue == -1) {
+              flag_crit <- c(
+                "var_1 <- abs(diff_pct)/100*n>{n}",
+                "var_2 <- diff_pct<{diff_pct}",
+                "var_3 <- p_value < 0.05  | r=={r}",
+                "all(var_1 & var_2, var_3);"
+              )
+            } else {
+              flag_crit <- c(
+                "var_1 <- abs(diff_pct)/100*n>{n}",
+                "var_2 <- diff_pct>{diff_pct}",
+                "var_3 <- p_value < 0.05  | r=={r}",
+                "all(var_1 & var_2, var_3);"
+              )
+            }
+
+            list(
+              inputs = inputs,
+              flag_crit = paste0(flag_crit, sep = "\n")
+            )
+          },
+          "rgv" = {
+            inputs <- shiny$fluidRow(
+              class = "d-flex justify-content-around",
+              shiny$numericInput(
+                ns("site_pct"), "site_pct",
+                min = -Inf, max = Inf, value = 25
+              ),
+              shiny$numericInput(
+                ns("diff_pct"), "diff_pct",
+                min = -Inf, max = Inf, value = 10
+              ),
+              shiny$numericInput(
+                ns("r"), "r",
+                min = -Inf, max = Inf, value = 3
+              ),
+              shiny$numericInput(
+                ns("p_value"), "p_value",
+                min = -Inf, max = Inf, value = .05
+              ),
+              shiny$div(id = ns("variables"))
+            )
+
+            if (input$flagValue == 1) {
+              flag_crit <- c(
+                "var_1 <- site_pct > {site_pct}",
+                "var_2 <- diff_pct > {diff_pct}",
+                "var_3 <- r > {r}",
+                "var_4 <-   p_value < {p_value}",
+                "all(var_1, var_2, var_3, 4);"
+              )
+            }
+
+            list(
+              inputs = inputs,
+              flag_crit = paste0(flag_crit, sep = "\n")
+            )
+          }
+        )
+      }
 
       shiny$observeEvent(input$deleteButton, {
         shiny$removeUI(selector = paste0("#", paste0(id, "-lmModel")))
@@ -143,6 +180,7 @@ server <- function(id, parentSession, inputData) {
 
       gluedFlagData <- shiny$reactive({
         shiny$req(input$flagInput)
+        shiny$req(input$site_pct)
         flagInput <- with(
           shiny$reactiveValuesToList(input),
           glue$glue(input$flagInput)
@@ -150,6 +188,7 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$flaggingPreview <- shiny$renderUI({
+        # browser()
         shiny$req(gluedFlagData())
         flagInput <- gluedFlagData()
         shinyAce$aceEditor(
