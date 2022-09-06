@@ -163,9 +163,7 @@ server <- function(id, parentSession, inputData) {
         data <- inputData()
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
-        switch(analysis,
-          "aei" = flaggingFilter()$inputs
-        )
+        flaggingFilter()$inputs
       })
 
       output$flaggingTemplate <- shiny$renderUI({
@@ -179,7 +177,7 @@ server <- function(id, parentSession, inputData) {
         )
       })
 
-      gluedFlagData <- shiny$observeEvent(input$flagInput, {
+      gluedFlagData <- shiny$eventReactive(input$flagInput, {
         flagInput <- with(
           shiny$reactiveValuesToList(input),
           glue$glue(input$flagInput)
