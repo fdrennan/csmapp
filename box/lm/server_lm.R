@@ -100,7 +100,7 @@ server <- function(id, parentSession, inputData) {
 
         out$inputs <- shiny$fluidRow(
           out$inputs,
-          shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Update"))
+          shiny$div(class = "text-right")
         )
         out
       }
@@ -148,10 +148,15 @@ server <- function(id, parentSession, inputData) {
               )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
-            shiny$column(6, shiny$uiOutput(ns("flaggingTemplate"))),
-            shiny$column(6, shiny$uiOutput(ns("flaggingPreview")))
+            shiny$column(12, 
+                         shiny$h3('Flagging Template'),
+                         shiny$uiOutput(ns("flaggingTemplate"))),
+            shiny$column(
+              12, 
+              shiny$div(class='text-right', bs4Dash$actionButton(ns("updateStats"), "Verify Statistics")))
+            ),
+            shiny$column(12, shiny$h3("Verify Flagging Criteria"), shiny$uiOutput(ns("flaggingPreview")))
           )
-        )
       })
 
 
