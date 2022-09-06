@@ -5,7 +5,6 @@ ui <- function() {
   box::use(.. / metadata / ui_metadata)
   box::use(.. / devop / ui_devop)
 
-
   bs4Dash$dashboardPage(
     controlbar = bs4Dash$dashboardControlbar(
       id = "homeControlbar", collapsed = FALSE,

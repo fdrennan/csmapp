@@ -28,19 +28,24 @@ server <- function(id, parentSession, inputData) {
       output[["lmModel"]] <- shiny$renderUI({
         shiny$div(
           class = "my-3",
-          shiny$div(
-            class = "d-flex justify-content-around my-3",
-            bs4Dash$actionButton(
-              ns("deleteButton"), "",
-              icon = shiny$icon("x"),
-              # class = "btn",
-              style = "height: 3rem;"
-            )
-          ),
+          # shiny$div(
+          #   class = "d-flex justify-content-end my-3",
+          #   
+          # ),
           bs4Dash$bs4Card(
             title = id,
             id = environment(ns)[["namespace"]],
             width = 12,
+            footer = {
+              shiny$div(class='d-flex justify-content-end',
+                bs4Dash$actionButton(
+                  ns("deleteButton"), "",
+                  icon = shiny$icon("x"),
+                  # class = "btn",
+                  style = "height: 3rem;"
+                )
+              )
+            },
             shiny$uiOutput(ns("statisticsSetup"))
           )
         )

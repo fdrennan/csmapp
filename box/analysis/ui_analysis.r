@@ -13,9 +13,6 @@ ui <- function(id, data) {
     shiny$column(
       12,
       shiny$div(
-        id='signalUI'
-      ),
-      shiny$div(
         class = "d-flex justify-content-end my-1",
         shiny$actionButton(
           class = "m-2",
