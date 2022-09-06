@@ -74,7 +74,7 @@ server <- function(id, parentSession, inputData) {
             ns("diff_pct"), "diff_pct",
             min = -Inf, max = Inf, value = 10
           ),
-          shiny$div(id = ns("additionalStatistics")),
+          # shiny$div(id = ns("additionalStatistics")),
           shiny$actionButton(ns("addVariable"), "Add variable"),
           shiny$numericInput(
             ns("flag"), "Flag",
@@ -87,7 +87,7 @@ server <- function(id, parentSession, inputData) {
       shiny$observeEvent(input$addVariable, {
         inputId <- paste0("numericInput", input$addVariable)
         shiny$insertUI(
-          selector = paste0("#", ns("additionalStatistics")),
+          selector = paste0("#", ns("addVariable")),
           where = "beforeBegin",
           shiny$numericInput(ns(inputId), inputId, value = 0)
         )
