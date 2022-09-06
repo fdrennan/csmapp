@@ -31,7 +31,7 @@ server <- function(id = "metadata") {
           dplyr$filter(study %in% input$study) |>
           dplyr$pull(year)
 
-        shiny$selectizeInput(ns("year"), "Year", choices = year, selected = year[1], multiple = FALSE)
+        shiny$selectizeInput(ns("year"), shiny$h5("Year"), choices = year, selected = year[1], multiple = FALSE)
       })
 
       output$month <- shiny$renderUI({
@@ -44,7 +44,7 @@ server <- function(id = "metadata") {
         max_month <- datafiles |>
           dplyr$filter(date == max(date)) |>
           dplyr$pull(monthName)
-        shiny$selectizeInput(ns("monthName"), "Month", choices = monthName, selected = max_month, multiple = TRUE)
+        shiny$selectizeInput(ns("monthName"), shiny$h5("Month"), choices = monthName, selected = max_month, multiple = TRUE)
       })
 
       output$analysis <- shiny$renderUI({
@@ -62,7 +62,7 @@ server <- function(id = "metadata") {
             choices = analysis,
             selected = analysis, multiple = TRUE
           ),
-          bs4Dash$actionButton(ns("go"), "Go")
+          shiny$div(class='text-center', bs4Dash$actionButton(ns("go"), shiny$h5("Import Study")))
         )
       })
 
