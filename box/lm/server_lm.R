@@ -76,25 +76,23 @@ server <- function(id, parentSession, inputData) {
 
 
       output$statisticsSetup <- shiny$renderUI({
-        shiny$req(inputData)
+        shiny$req(input$flagValue)
         data <- inputData()
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
-
         switch(analysis,
           "aei" = {
-            currentFlag <- input$flag
             shiny$wellPanel(
               shiny$numericInput(
-                ns("nStatistics"), "n",
+                ns("n"), "n",
                 min = -Inf, max = Inf, value = 2
               ),
               shiny$numericInput(
-                ns("rStatistics"), "r",
+                ns("r"), "r",
                 min = -Inf, max = Inf, value = 2
               ),
               shiny$numericInput(
-                ns("diff_pctStatistics"), "diff_pct",
+                ns("diff_pct"), "diff_pct",
                 min = -Inf, max = Inf, value = -10
               ),
               shiny$div(id = ns("variables"))
@@ -104,16 +102,30 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$flaggingTemplate <- shiny$renderUI({
-        # shiny$req(input$textTemplate)
-        flag_crit <- "if ((abs(diff_pct)/100*n>{n} & diff_pct<{diff_pct}) & ( p_value<0.05 | r=={r})) {flag= -1};"
-        shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
-                           fontSize = 18, wordWrap = TRUE, mode = 'r', autoComplete = 'enabled')
+        shiny$req(input$n, input$r, input$diff_pct)
+        browser()
+        flag_crit <- "var_1 <- abs(diff_pct)/100*n>{n}\nvar_2 <- diff_pct<{diff_pct}\nvar_3 <- p_value<0.05  | r=={r}\nall(var_1, var_2, var_3, var_4);"
+        shiny$div(
+          shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
+                             fontSize = 14, wordWrap = TRUE, autoComplete = 'enabled', 
+                             minLines = 1, maxLines = 5, height  ='130px'),
+          shiny$div(class='text-right', bs4Dash$actionButton(ns('update'), 'Update'))
+        )
       })
 
+      gluedFlagData <- shiny$eventReactive(input$update, {
+        # shiny$isolate(input)
+        flagInput <- with(
+          shiny$reactiveValuesToList(input),
+          glue$glue(input$flagInput)
+        )
+      })
+      
       output$flaggingPreview <- shiny$renderUI({
-        shiny$req(input$flagInput)
-        shiny$debounce(input$flagInput, 100)
-        shinyAce$aceEditor(outputId = ns('flag'), value = input$flagInput, theme = 'chaos')
+        shiny$req(gluedFlagData())
+        flagInput <- gluedFlagData()
+        shinyAce$aceEditor(outputId = ns('flag'), value = flagInput, theme = 'chaos',
+                           fontSize = 14, wordWrap = TRUE, mode = 'r', minLines = 1, maxLines = 5, height = '130px')
       })
 
       shiny$observeEvent(input$addVariable, {
