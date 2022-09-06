@@ -18,7 +18,7 @@ server <- function(id, parentSession, inputData) {
       ns <- session$ns
 
       analysis_flagging <- function(analysis) {
-        switch(analysis,
+        out <- switch(analysis,
           "aei" = {
             inputs <- shiny$fluidRow(
               class = "d-flex justify-content-around",
@@ -97,6 +97,9 @@ server <- function(id, parentSession, inputData) {
             )
           }
         )
+
+        out$inputs <- shiny$div(out$inputs, shiny$actionButton(ns("updateStats"), "Update"))
+        out
       }
 
       shiny$observeEvent(input$deleteButton, {
@@ -129,16 +132,16 @@ server <- function(id, parentSession, inputData) {
           shiny$fluidRow(
             shiny$column(
               6,
-              offset = 3,
-              shiny$wellPanel(
-                shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
-                  choices = PARAMCD,
-                  selected = PARAMCD, multiple = TRUE
-                ),
-                shiny$selectInput(
-                  ns("flagValue"), "Flag",
-                  choices = c(-1, 0, 1), selected = 1
-                )
+              shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
+                choices = PARAMCD,
+                selected = PARAMCD, multiple = TRUE
+              )
+            ),
+            shiny$column(
+              6,
+              shiny$selectInput(
+                ns("flagValue"), "Flag",
+                choices = c(-1, 0, 1), selected = 1
               )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
