@@ -86,36 +86,24 @@ server <- function(id, parentSession, inputData) {
             currentFlag <- input$flag
             shiny$wellPanel(
               shiny$numericInput(
-                ns("nStatistics"), "n",
+                ns("n"), "n",
                 min = -Inf, max = Inf, value = 2
               ),
               shiny$numericInput(
-                ns("rStatistics"), "r",
+                ns("r"), "r",
                 min = -Inf, max = Inf, value = 2
               ),
               shiny$numericInput(
-                ns("diff_pctStatistics"), "diff_pct",
+                ns("diff_pct"), "diff_pct",
                 min = -Inf, max = Inf, value = -10
               ),
-              shiny$div(id = ns("variables"))
+              shiny$div(id = ns("variables")),
+              bs4Dash$actionButton(ns('updateTemplate'), 'Update Template')
             )
           }
         )
       })
-
-      output$flaggingTemplate <- shiny$renderUI({
-        # shiny$req(input$textTemplate)
-        flag_crit <- "if ((abs(diff_pct)/100*n>{n} & diff_pct<{diff_pct}) & ( p_value<0.05 | r=={r})) {flag= -1};"
-        shinyAce$aceEditor(outputId = ns('flagInput'), value = flag_crit, theme = 'chaos',
-                           fontSize = 18, wordWrap = TRUE, mode = 'r', autoComplete = 'enabled')
-      })
-
-      output$flaggingPreview <- shiny$renderUI({
-        shiny$req(input$flagInput)
-        shiny$debounce(input$flagInput, 100)
-        shinyAce$aceEditor(outputId = ns('flag'), value = input$flagInput, theme = 'chaos')
-      })
-
+      
       shiny$observeEvent(input$addVariable, {
         if (input$variableName == "") {
           shiny$showNotification("No variable name supplied", type = "warning")
@@ -128,6 +116,34 @@ server <- function(id, parentSession, inputData) {
           }
         )
       })
+
+      output$flaggingTemplate <- shiny$renderUI({
+        shiny$req(input$flagValue)
+        flag_crit <- "if ((abs(diff_pct)/100*n>{n} & diff_pct<{diff_pct}) & ( p_value<0.05 | r=={r})) {flag= -1};"
+        shinyAce$aceEditor(
+          outputId = ns("flagInput"), value = flag_crit, theme = "chaos",
+          fontSize = 16, wordWrap = TRUE, autoComplete = "enabled"
+        )
+      })
+
+      shiny$observeEvent(input$updateTemplate, {
+        output$flaggingPreview <- shiny$renderUI({
+          shiny$req(input$flagInput)
+          shiny$debounce(input$flagInput, 100)
+          
+          shinyAce$aceEditor(
+            outputId = ns("flag"), value = with(
+              shiny$reactiveValuesToList(input),
+              {
+                glue$glue(input$flagInput)
+              }
+            ), theme = "chaos",
+            fontSize = 16, wordWrap = TRUE
+          )
+        })
+      })
+
+      
     },
     session = parentSession
   )
