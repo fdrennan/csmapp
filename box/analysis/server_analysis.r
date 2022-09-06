@@ -37,14 +37,3 @@ server <- function(id, dataToAnalyze, parentSession) {
     session = parentSession
   )
 }
-
-
-#' @export
-# server <- function(id = "analysis") {
-#   box::use(shiny, bs4Dash, cli)
-#
-
-#
-#
-
-# }

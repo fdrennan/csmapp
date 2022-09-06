@@ -27,7 +27,7 @@ server <- function(id, parentSession, inputData) {
         card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
         card_name <- paste0("Flagging Criteria ", card_number)
         bs4Dash$bs4Card(
-          title = shiny$h2(card_name),
+          title = shiny$h3(card_name),
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
@@ -37,6 +37,7 @@ server <- function(id, parentSession, inputData) {
               # style = "height: 3rem;"
             )
           },
+          shiny$selectInput(ns("flagValue"), "Flag", choices = c(-1, 0, 1), selected = 1),
           shiny$uiOutput(ns("statisticsSetup"))
         )
       })
@@ -49,49 +50,54 @@ server <- function(id, parentSession, inputData) {
 
         shiny$fluidRow(
           shiny$column(
-            12,
-            shiny$h3("Select PARAMCD"),
-            shiny$selectizeInput(ns("statsGroupPARAMCD"), "",
-                                 choices = data[[1]]$PARAMCD,
-                                 selected = data[[1]]$PARAMCD, multiple = TRUE
+            6,
+            shiny$wellPanel(
+              shiny$h3("Select PARAMCD"),
+              shiny$selectizeInput(ns("statsGroupPARAMCD"), "",
+                choices = data[[1]]$PARAMCD,
+                selected = data[[1]]$PARAMCD, multiple = TRUE
+              )
             )
           ),
           shiny$column(
-            12,
-            shiny$h3('Standard Variables')
-          ), 
-          shiny$column(
-            12,
-            shiny$numericInput(
-              ns("nStatistics"), "n",
-              min = -Inf, max = Inf, value = 2
-            ),
-            shiny$numericInput(
-              ns("rStatistics"), "r",
-              min = -Inf, max = Inf, value = 2
-            ),
-            shiny$numericInput(
-              ns("diff_pctStatistics"), "diff_pct",
-              min = -Inf, max = Inf, value = 10
+            6,
+            shiny$h3("Statistics"),
+            switch(analysis,
+              "aei" = {
+                shiny$wellPanel(
+                  shiny$numericInput(
+                    ns("nStatistics"), "n",
+                    min = -Inf, max = Inf, value = 2
+                  ),
+                  shiny$numericInput(
+                    ns("rStatistics"), "r",
+                    min = -Inf, max = Inf, value = 2
+                  ),
+                  shiny$numericInput(
+                    ns("diff_pctStatistics"), "diff_pct",
+                    min = -Inf, max = Inf, value = 10
+                  ),
+                  shiny$div(id = ns("variables")),
+                  shiny$textInput(ns("variableName"), label = NULL, placeholder = "Variable Name"),
+                  shiny$div(
+                    class = "text-right",
+                    bs4Dash$actionButton(
+                      ns("addVariable"),
+                      shiny$tags$em("Add variable")
+                    )
+                  )
+                )
+              }
             )
-          ),
-          shiny$tags$hr(),
-          shiny$column(
-            12,
-            shiny$h3('Add Variables'),
-            shiny$textInput(ns("variableName"), "Variable Name"),
-            shiny$div(class = "text-right", bs4Dash$actionButton(ns("addVariable"), "Add variable")),
-            shiny$div(id = ns("variables"))
-          ),
-          shiny$tags$hr(),
-          shiny$column(
-            12,
-            shiny$textOutput(ns("flaggingCode"))
           )
         )
       })
 
       shiny$observeEvent(input$addVariable, {
+        if (input$variableName == "") {
+          shiny$showNotification("No variable name supplied", type = "warning")
+        }
+        shiny$req(input$variableName)
         shiny$insertUI(
           selector = paste0("#", ns("variables")),
           where = "beforeBegin", ui = {
