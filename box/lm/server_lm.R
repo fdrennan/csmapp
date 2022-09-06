@@ -26,11 +26,7 @@ server <- function(id, parentSession, inputData) {
 
 
       output[["lmModel"]] <- shiny$renderUI({
-        shiny$req(inputData)
-        data <- inputData()
 
-        PARAMCD <- data[[1]]$PARAMCD
-        analysis <- data[[1]]$analysis
 
         shiny$div(
           class = "my-3",
@@ -47,31 +43,40 @@ server <- function(id, parentSession, inputData) {
             title = id,
             id = environment(ns)[["namespace"]],
             width = 12,
-            shiny$wellPanel(
-              shiny$selectizeInput(ns("statsGroupPARAMCD"),
-                shiny$h4(glue$glue("Signal / Flag Mapper")),
-                choices = data[[1]]$PARAMCD,
-                selected = data[[1]]$PARAMCD, multiple = TRUE
-              ),
-              shiny$numericInput(
-                ns("nStatistics"), "n",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("rStatistics"), "r",
-                min = -Inf, max = Inf, value = 2
-              ),
-              shiny$numericInput(
-                ns("diff_pctStatistics"), "diff_pct",
-                min = -Inf, max = Inf, value = 10
-              ),
-              shiny$numericInput(
-                ns("flagValue"), "Flag",
-                min = -5, max = 5, value = 1, step = 1
-              ),
-              shiny$uiOutput(ns("flaggingCode"))
-            )
+            shiny$uiOutput(ns('statisticsSetup'))
           )
+        )
+      })
+      
+      output$statisticsSetup <- shiny$renderUI({
+        shiny$req(inputData)
+        data <- inputData()
+        PARAMCD <- data[[1]]$PARAMCD
+        analysis <- data[[1]]$analysis
+        
+        shiny$wellPanel(
+          shiny$selectizeInput(ns("statsGroupPARAMCD"),
+                               shiny$h4(glue$glue("Signal / Flag Mapper")),
+                               choices = data[[1]]$PARAMCD,
+                               selected = data[[1]]$PARAMCD, multiple = TRUE
+          ),
+          shiny$numericInput(
+            ns("nStatistics"), "n",
+            min = -Inf, max = Inf, value = 2
+          ),
+          shiny$numericInput(
+            ns("rStatistics"), "r",
+            min = -Inf, max = Inf, value = 2
+          ),
+          shiny$numericInput(
+            ns("diff_pctStatistics"), "diff_pct",
+            min = -Inf, max = Inf, value = 10
+          ),
+          shiny$numericInput(
+            ns("flagValue"), "Flag",
+            min = -5, max = 5, value = 1, step = 1
+          ),
+          shiny$textOutput(ns("flaggingCode"))
         )
       })
 
@@ -86,7 +91,7 @@ server <- function(id, parentSession, inputData) {
         stats_2 <- glue$glue("(diff_pct < {diff_pctStatistics})")
         stats_3 <- glue$glue("(p_value<0.05 | r== {rStatistics})")
         stats_code <- paste0(c(stats_1, stats_2, stats_3), collapse = " &\n")
-        #
+        
         code <-
           styler$style_text(
             with(
@@ -99,19 +104,20 @@ server <- function(id, parentSession, inputData) {
       })
 
 
-      output$flaggingCode <- shiny$renderUI({
+      output$flaggingCode <- shiny$renderText({
         shiny$req(syledCode())
         code <- syledCode()
-        shinyAce$aceEditor(
-          outputId = ns("ace"),
-          theme = "chaos",
-          mode = "r",
-          fontSize = 18,
-          autoScrollEditorIntoView = TRUE,
-          minLines = 5,
-          maxLines = 30,
-          value = code
-        )
+        code
+        # shinyAce$aceEditor(
+        #   outputId = ns("ace"),
+        #   theme = "chaos",
+        #   mode = "r",
+        #   fontSize = 18,
+        #   autoScrollEditorIntoView = TRUE,
+        #   minLines = 5,
+        #   maxLines = 30,
+        #   value = code
+        # )
       })
     },
     session = parentSession

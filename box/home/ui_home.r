@@ -6,15 +6,16 @@ ui <- function() {
   box::use(.. / devop / ui_devop)
 
 
-  bs4Dash$dashboardPage(
+  bs4Dash$dashboardPage(controlbar = bs4Dash$dashboardControlbar(id='homeControlbar', collapsed = FALSE,
+    shiny$div(
+      if (getOption("development")) NULL else ui_devop(),
+      ui_metadata$ui()
+    )
+  ),
     dark = TRUE,
     header = bs4Dash$dashboardHeader("CSM Management System"),
     sidebar = bs4Dash$dashboardSidebar(
-      expandOnHover = TRUE, collapsed = TRUE,
-      shiny$div(
-        if (getOption("development")) NULL else ui_devop(),
-        ui_metadata$ui()
-      )
+      expandOnHover = FALSE, collapsed = TRUE
     ),
     body = bs4Dash$dashboardBody(
       shiny$uiOutput("setupAnalysis")

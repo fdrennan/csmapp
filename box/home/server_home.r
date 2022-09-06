@@ -32,30 +32,21 @@ server <- function(input, output, session) {
 
     output$setupAnalysis <- shiny$renderUI({
 
-      # CompareProportion	T_Zscore	1.68	1.8
-      # TukeyOutliers	fence	outer	enter choice of "outer" or "inner"
-      # DosingAnalysis	cutoff_perplanned	80	90
-      # CompareProportion	min_n_value	2
-      # CompareProportion	min_n_number_betabinom	5
-
-
       shiny$fluidRow(
         bs4Dash$box(title='Program Configuration Parameters',
           width = 12,
-          shiny$wellPanel(
-            shiny$h4("Compare Proportion"),
-            shiny$numericInput(ns("T_Zscore"), "T_Zscore", min = -Inf, max = Inf, value = 1.68),
-            shiny$numericInput(ns("min_n_number_betabinom"), "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
-            shiny$numericInput(ns("min_n_value"), "min_n_value", min = -Inf, max = Inf, value = 2),
-            shiny$h4("Tukey"),
-            shiny$selectInput(ns("TukeyOutliers"), "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
-            shiny$h4("Dosing Analysis"),
-            shiny$numericInput(ns("cutoff_perplanned"), "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
-          )
+          shiny$h4("Compare Proportion"),
+          shiny$numericInput(ns("T_Zscore"), "T_Zscore", min = -Inf, max = Inf, value = 1.68),
+          shiny$numericInput(ns("min_n_number_betabinom"), "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
+          shiny$numericInput(ns("min_n_value"), "min_n_value", min = -Inf, max = Inf, value = 2),
+          shiny$h4("Tukey"),
+          shiny$selectInput(ns("TukeyOutliers"), "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
+          shiny$h4("Dosing Analysis"),
+          shiny$numericInput(ns("cutoff_perplanned"), "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
         ),
         purrr$map(
           unique(metadata$analysis), function(x) {
-            bs4Dash::box(title = toupper(x), width = 12, ui_analysis$ui(x, data))
+            bs4Dash::box(title = paste0('Flagging Setup: ', toupper(x)), width = 12, ui_analysis$ui(x, data))
           }
         )
       )
