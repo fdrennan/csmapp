@@ -24,6 +24,10 @@ ui <- function() {
         flat = TRUE,
         id = "sidebarMenu",
         bs4Dash$menuItem(
+          text = "Welcome",
+          tabName = "tab0"
+        ),
+        bs4Dash$menuItem(
           text = "Program Configuration Parameters",
           tabName = "tab1"
         ),
@@ -35,6 +39,7 @@ ui <- function() {
     ),
     body = bs4Dash$dashboardBody(
       bs4Dash$tabItems(
+        bs4Dash$tabItem(tabName = 'tab0', shiny$h2('Centralized Statistical Monitoring', class='text-display')),
         bs4Dash$tabItem(
           tabName = "tab1",
           bs4Dash$box(
