@@ -156,7 +156,6 @@ server <- function(id, parentSession, inputData) {
         shiny$req(inputData())
         data <- inputData()
         analysis <- data[[1]]$analysis
-        browser()
         analysis_flagging(analysis)
       })
 
@@ -180,7 +179,7 @@ server <- function(id, parentSession, inputData) {
         )
       })
 
-      gluedFlagData <- shiny$eventReactive(input$flagInput, {
+      gluedFlagData <- shiny$eventReactive(input$updateStats, {
         flagInput <- with(
           shiny$reactiveValuesToList(input),
           glue$glue(input$flagInput)
