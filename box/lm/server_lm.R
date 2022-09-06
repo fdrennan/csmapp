@@ -153,6 +153,7 @@ server <- function(id, parentSession, inputData) {
         shiny$req(inputData())
         data <- inputData()
         analysis <- data[[1]]$analysis
+        browser()
         analysis_flagging(analysis)
       })
 
@@ -188,7 +189,7 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$flaggingPreview <- shiny$renderUI({
-        # browser()
+        browser()
         shiny$req(gluedFlagData())
         flagInput <- gluedFlagData()
         shinyAce$aceEditor(
