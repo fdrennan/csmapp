@@ -37,7 +37,7 @@ server <- function(input, output, session) {
       )
     })
 
-    purrr$walk(
+    purrr$map(
       metadata$analysis,
       function(x) server_analysis$server(id = x, data, parentSession = session)
     )
@@ -48,6 +48,11 @@ server <- function(input, output, session) {
       selected = "tab2"
     )
     bs4Dash$updateControlbar("homeControlbar")
+  })
+  
+  shiny$observe({
+    out <- shiny$reactiveValuesToList(input)
+    print(out)
   })
 }
 

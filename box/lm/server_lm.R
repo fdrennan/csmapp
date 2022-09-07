@@ -407,6 +407,8 @@ server <- function(id, parentSession, inputData) {
           height = "130px"
         )
       })
+      
+      input
     },
     session = parentSession
   )
