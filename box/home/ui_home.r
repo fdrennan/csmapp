@@ -34,6 +34,10 @@ ui <- function() {
         bs4Dash$menuItem(
           text = "Flagging Setup",
           tabName = "tab2"
+        ),
+        bs4Dash$menuItem(
+          text = "Flagging Review",
+          tabName = "tab3"
         )
       )
     ),
@@ -58,6 +62,10 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab2",
           shiny$uiOutput("tab2UI")
+        ),
+        bs4Dash$tabItem(
+          tabName = "tab3",
+          shiny$actionButton('updateReview', 'Review')
         )
       )
     )

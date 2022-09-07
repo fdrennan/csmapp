@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   #
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
-  box::use(uuid)
+  box::use(uuid, storr)
   sessionId <- uuid$UUIDgenerate()
 
   ns <- session$ns
@@ -49,8 +49,14 @@ server <- function(input, output, session) {
     bs4Dash$updateControlbar("homeControlbar")
   })
   
-  shiny$observeEvent(input$finishStatisticsSetup, {
+  shiny$observeEvent(input$updateReview, {
     out <- shiny$reactiveValuesToList(input)
+    storr <- storr::storr_rds('cache')
+    out <- lapply(getOption('analysis_filter'), function(analysisName) {
+      out <- storr$get(paste0(analysisName, '-', sessionId))
+      out
+    })
+    browser()
     print(out)
   })
 }
