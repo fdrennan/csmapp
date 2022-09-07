@@ -60,8 +60,10 @@ server <- function(input, output, session) {
         shiny$showNotification(paste('No data supplied for', analysisName))
       })
     })
-    # browser()
-    print(out)
+    
+    output$reviewOut <- shiny$renderText({
+      utils::capture.output(out)
+    })
   })
 }
 
