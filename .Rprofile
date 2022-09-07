@@ -8,7 +8,7 @@ options(base_directory = getOption("bmrn_base_dir"))
 options(cache_path = "./cache/data.rda")
 options(analysis_filter = {
   if (getOption("development")) {
-    c("aei", "rgv")
+    c("aei", "rgv", "vitals", "rgm", "underdose", "aegap", "aecnt")
   } else {
     NULL
   }
