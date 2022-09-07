@@ -17,6 +17,10 @@ ui <- function(id, data) {
           icon = shiny$icon("plus")
         )
       )
+    ),
+    shiny$column(
+      12,
+      bs4Dash$actionButton(ns('finishSetup'), "Submit")
     )
   )
 }

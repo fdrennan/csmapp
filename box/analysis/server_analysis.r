@@ -2,7 +2,7 @@
 server <- function(id, dataToAnalyze, parentSession) {
   #
   box::use(shiny, cli, .. / lm / server_lm)
-  box::use(shiny, cli, .. / lm / ui_lm, purrr)
+  box::use(shiny, cli, .. / lm / ui_lm, purrr, stringr)
 
   shiny$moduleServer(
     id,
@@ -32,6 +32,12 @@ server <- function(id, dataToAnalyze, parentSession) {
           ui = ui_lm$ui(ui_id, inputData())
         )
         server_lm$server(ui_id, parentSession, inputData)
+      })
+      
+      shiny$observeEvent(input$finishSetup, {
+        out <- shiny$reactiveValuesToList(input)
+        value_names <- names(out)
+        
       })
     },
     session = parentSession

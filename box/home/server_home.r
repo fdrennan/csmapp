@@ -50,8 +50,9 @@ server <- function(input, output, session) {
     bs4Dash$updateControlbar("homeControlbar")
   })
   
-  shiny$observe({
+  shiny$observeEvent(input$finishStatisticsSetup, {
     out <- shiny$reactiveValuesToList(input)
+    browser()
     print(out)
   })
 }
