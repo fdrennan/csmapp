@@ -24,7 +24,6 @@ server <- function(id, parentSession, inputData) {
         out <- switch(analysis,
           "aei" = {
             inputs <- shiny$fluidRow(
-              class = "d-flex justify-content-around",
               shiny$numericInput(
                 ns("n"), "n",
                 min = -Inf, max = Inf, value = 2
@@ -64,7 +63,6 @@ server <- function(id, parentSession, inputData) {
           },
           "rgv" = {
             inputs <- shiny$fluidRow(
-              class = "d-flex justify-content-around",
               shiny$numericInput(
                 ns("site_pct"), "site_pct",
                 min = -Inf, max = Inf, value = 25
@@ -348,21 +346,16 @@ server <- function(id, parentSession, inputData) {
             ),
             shiny$column(
               12,
-              {
-                if (is.null(PARAMCD)) {
-                  shiny$div()
-                } else {
-                  shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
-                                       choices = PARAMCD,
-                                       selected = PARAMCD, multiple = TRUE
-                  )
-                }
-              }
+              shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
+                                   choices = PARAMCD,
+                                   selected = PARAMCD, multiple = TRUE
+              )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
-            shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics")),
+            shiny$column(12, shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics"))),
             shiny$column(
-              6, shiny$h3("Flagging Template"),
+              6, 
+              shiny$h3("Flagging Template"),
               shiny$uiOutput(ns("flaggingTemplate"))
             ),
             shiny$column(6, shiny$h3("Verify Flagging Criteria"), shiny$uiOutput(ns("flaggingPreview")))
@@ -410,8 +403,9 @@ server <- function(id, parentSession, inputData) {
         flagInput <- gluedFlagData()
         shinyAce$aceEditor(
           outputId = ns("flag"), value = flagInput, theme = "chaos",
+          highlightActiveLine = TRUE,
           fontSize = 14, wordWrap = TRUE,
-          mode = "r", minLines = 1, maxLines = 10,
+          mode = "r", minLines = 1, maxLines = 15,
           height = "130px"
         )
       })
