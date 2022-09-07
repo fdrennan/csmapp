@@ -51,12 +51,16 @@ server <- function(input, output, session) {
   
   shiny$observeEvent(input$updateReview, {
     out <- shiny$reactiveValuesToList(input)
-    storr <- storr::storr_rds('cache')
+    storr <- storr::storr_rds('storr')
     out <- lapply(getOption('analysis_filter'), function(analysisName) {
-      out <- storr$get(paste0(analysisName, '-', sessionId))
-      out
+      tryCatch({
+        out <- storr$get(paste0(analysisName, '-', sessionId))
+        out
+      }, error = function(err) {
+        shiny$showNotification(paste('No data supplied for', analysisName))
+      })
     })
-    browser()
+    # browser()
     print(out)
   })
 }
