@@ -8,8 +8,8 @@ server <- function(input, output, session) {
   #
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
-
-
+  box::use(uuid)
+  sessionId <- uuid$UUIDgenerate()
 
   ns <- session$ns
   server_devop$server()
@@ -19,7 +19,6 @@ server <- function(input, output, session) {
     box::use(.. / processing)
     shiny$req(metadata())
     data <- processing$make_data_to_analyze(metadata())
-
     data
   })
 
@@ -39,7 +38,7 @@ server <- function(input, output, session) {
 
     purrr$map(
       metadata$analysis,
-      function(x) server_analysis$server(id = x, data, parentSession = session)
+      function(x) server_analysis$server(id = x, data, parentSession = session, sessionId)
     )
 
     bs4Dash$updatebs4TabItems(

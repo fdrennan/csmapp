@@ -28,7 +28,7 @@ ui <- function() {
           tabName = "tab0"
         ),
         bs4Dash$menuItem(
-          text = "Program Configuration Parameters",
+          text = "Configuration Parameters",
           tabName = "tab1"
         ),
         bs4Dash$menuItem(
@@ -43,8 +43,8 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab1",
           bs4Dash$box(
-            title = shiny$h2("Program Configuration Parameters"),
-            width = 12,
+            title = shiny$h2("Configuration Parameters"),
+            width = 8, offset = 2,
             shiny$h4("Compare Proportion"),
             shiny$numericInput("T_Zscore", "T_Zscore", min = -Inf, max = Inf, value = 1.68),
             shiny$numericInput("min_n_number_betabinom", "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),

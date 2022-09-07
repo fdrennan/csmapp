@@ -13,4 +13,5 @@ push: style
 	git push origin $$(git rev-parse --abbrev-ref HEAD)
 
 
-
+delete: 
+	rm -rf sqlite/app.db
