@@ -23,7 +23,7 @@ server <- function(id, parentSession, inputData) {
       analysis_flagging <- function(analysis) {
         out <- switch(analysis,
           "aei" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("n"), "n",
                 min = -Inf, max = Inf, value = 2
@@ -62,7 +62,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "rgv" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("site_pct"), "site_pct",
                 min = -Inf, max = Inf, value = 25
@@ -101,7 +101,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "aecnt" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("site_cnt"), "site_cnt",
                 min = -Inf, max = Inf, value = 3
@@ -156,7 +156,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "aegap" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("n"), "n",
                 min = -Inf, max = Inf, value = 1
@@ -185,7 +185,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "rgm" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("n"), "n",
                 min = -Inf, max = Inf, value = 5
@@ -239,7 +239,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "underdose" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("diff_pct"), "diff_pct",
                 min = -Inf, max = Inf, value = 10
@@ -263,7 +263,7 @@ server <- function(id, parentSession, inputData) {
             )
           },
           "vitals" = {
-            inputs <- shiny$fluidRow(
+            inputs <- list(
               shiny$numericInput(
                 ns("site_value_cnt"), "site_value_cnt",
                 min = -Inf, max = Inf, value = 8
@@ -302,10 +302,8 @@ server <- function(id, parentSession, inputData) {
             )
           }
         )
-
         out$inputs <- shiny$fluidRow(
-          out$inputs,
-          shiny$div(class = "text-right")
+          lapply(out$inputs, function(x) x)
         )
         out
       }
