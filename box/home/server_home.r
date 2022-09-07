@@ -52,7 +52,6 @@ server <- function(input, output, session) {
   
   shiny$observeEvent(input$finishStatisticsSetup, {
     out <- shiny$reactiveValuesToList(input)
-    browser()
     print(out)
   })
 }

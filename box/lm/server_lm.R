@@ -3,7 +3,6 @@
 #' @export
 server <- function(id, parentSession, inputData) {
   remove_shiny_inputs <- function(id, .input) {
-    print(paste0('Removing', id))
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
         .subset2(.input, "impl")$.values$remove(i)
@@ -406,7 +405,7 @@ server <- function(id, parentSession, inputData) {
         shiny$req(gluedFlagData())
         flagInput <- gluedFlagData()
         shinyAce$aceEditor(
-          outputId = ns("flag"), value = flagInput, theme = "chaos",
+          outputId = ns("flagCode"), value = flagInput, theme = "chaos",
           highlightActiveLine = TRUE,
           fontSize = 14, wordWrap = TRUE,
           mode = "r", minLines = 1, maxLines = 15,
