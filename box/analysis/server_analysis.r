@@ -37,7 +37,7 @@ server <- function(id, dataToAnalyze, parentSession) {
       shiny$observeEvent(input$finishSetup, {
         out <- shiny$reactiveValuesToList(input)
         value_names <- names(out)
-        
+        lapply(value_names, function(x) shiny$showNotification(x))
       })
     },
     session = parentSession

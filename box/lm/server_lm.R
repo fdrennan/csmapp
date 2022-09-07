@@ -3,6 +3,7 @@
 #' @export
 server <- function(id, parentSession, inputData) {
   remove_shiny_inputs <- function(id, .input) {
+    print(paste0('Removing', id))
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
         .subset2(.input, "impl")$.values$remove(i)
@@ -309,9 +310,14 @@ server <- function(id, parentSession, inputData) {
       }
 
       shiny$observeEvent(input$deleteButton, {
+        names_of_inputs <- names(shiny$reactiveValuesToList(input))
         shiny$removeUI(selector = paste0("#", paste0(id, "-lmModel")))
         shiny$removeUI(selector = paste0("#", ns("deleteButton")))
-        remove_shiny_inputs(id, input)
+        lapply(
+          names_of_inputs, function(x) {
+            remove_shiny_inputs(x, input)
+          }
+        )
       })
 
       output$lmModel <- shiny$renderUI({
