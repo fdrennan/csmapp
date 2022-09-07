@@ -340,7 +340,14 @@ server <- function(id, parentSession, inputData) {
           },
           shiny$fluidRow(
             shiny$column(
-              6,
+              12,
+              shiny$selectInput(
+                ns("flagValue"), "Flag",
+                choices = c(-1, 0, 1), selected = 1
+              )
+            ),
+            shiny$column(
+              12,
               {
                 if (is.null(PARAMCD)) {
                   shiny$div()
@@ -351,13 +358,6 @@ server <- function(id, parentSession, inputData) {
                   )
                 }
               }
-            ),
-            shiny$column(
-              6,
-              shiny$selectInput(
-                ns("flagValue"), "Flag",
-                choices = c(-1, 0, 1), selected = 1
-              )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
             shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics")),
