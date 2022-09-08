@@ -31,7 +31,11 @@ server <- function(input, output, session) {
       metadata <- metadata()
       purrr$map(
         unique(metadata$analysis), function(x) {
-          bs4Dash::box(title = shiny$h2(toupper(x)), width = 12, ui_analysis$ui(x, data))
+          bs4Dash::box(
+            title = shiny$h2(toupper(x), class='text-center display-2'), 
+            width = 12, 
+            ui_analysis$ui(x, data)
+          )
         }
       )
     })
