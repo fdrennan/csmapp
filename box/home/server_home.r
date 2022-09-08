@@ -69,30 +69,62 @@ server <- function(input, output, session) {
       )
     })
 
-    output$reviewOut <- shiny$renderText({
+    output$reviewOut <- shiny$renderTable({
       out <- purrr$keep(out, ~ length(.) > 1)
-      browser()
+      #
 
       out <- purrr$map_dfr(
         out, function(x) {
           x_names <- names(x)
-          values <- unlist(lapply(x, jsonlite$toJSON))
-          value_names <- names(values)
+
+          analysis <- x$analysis
+          x <- x[grepl("^[0-9]{4}-", x_names)]
+          x_names <- names(x)
+          x_values <- purrr$map(x, list)
           data <- dplyr$tibble(
-            input_names = value_names,
-            input_value = values,
-            analysis = x$analysis
+            input_names = x_names,
+            input_value = x_values,
+            analysis = analysis
           )
+          out <- tidyr$separate(data, input_names, c("flag_id", "value_name"))
+          out <- dplyr$filter(out, value_name %in% c("flagValue", "flagCode", "statsGroupPARAMCD"))
+
+          split(
+            out, out$flag_id
+          ) |>
+            purrr$map_dfr(
+              function(y) {
+                paramcd <- y |>
+                  dplyr$filter(value_name == "statsGroupPARAMCD") |>
+                  dplyr$pull(input_value) |>
+                  unlist()
+                flagCode <- y |>
+                  dplyr$filter(
+                    value_name == "flagCode"
+                  ) |>
+                  dplyr$pull(input_value) |>
+                  unlist()
+                flagValue <- y |>
+                  dplyr$filter(
+                    value_name == "flagValue"
+                  ) |>
+                  dplyr$pull(input_value) |>
+                  unlist()
+
+                flag_id <- unique(y$flag_id)
+                analysis <- unique(y$analysis)
+
+                dplyr$tibble(
+                  analysis = analysis,
+                  flag_id = flag_id,
+                  paramcd = paramcd,
+                  flagCode = flagCode,
+                  flagValue = flagValue
+                )
+              }
+            )
         }
       )
-
-      out <- tidyr$separate(out, input_names, c("flag_id", "value_name"))
-      out <- dplyr$filter(out, value_name %in% c("flagValue", "flagCode", "statsGroupPARAMCD"))
-      out <- dplyr$select(out, analysis, flag_id, value_name, input_value)
-      out <- dplyr$arrange(out, analysis, flag_id, value_name)
-      out <- jsonlite$toJSON(out, pretty = TRUE)
-
-      out
     })
   })
 }

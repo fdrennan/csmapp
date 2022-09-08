@@ -70,7 +70,7 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab3",
           shiny$actionButton("updateReview", "Review"),
-          shiny$textOutput("reviewOut", container = shiny$tags$pre)
+          shiny$tableOutput("reviewOut")
         )
       )
     )
