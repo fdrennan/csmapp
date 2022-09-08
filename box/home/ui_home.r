@@ -21,23 +21,23 @@ ui <- function() {
       expandOnHover = FALSE,
       collapsed = FALSE,
       bs4Dash$sidebarMenu(
-        flat = FALSE,
+        # flat = FALSE,
         id = "sidebarMenu",
-        bs4Dash$menuItem(
+        bs4Dash$menuItem(icon =shiny::icon("book"),
           text = "Welcome",
           tabName = "tab0"
         ),
         bs4Dash$menuItem(
-          text = "Configuration Parameters",
-          tabName = "tab1"
-        ),
-        bs4Dash$menuItem(
           text = "Flagging Setup",
-          tabName = "tab2"
+          tabName = "tab2", icon = shiny$icon("flag")
         ),
         bs4Dash$menuItem(
           text = "Flagging Review",
-          tabName = "tab3"
+          tabName = "tab3", icon = shiny$icon("check")
+        ),
+        bs4Dash$menuItem(
+          text = "Configuration Parameters",
+          tabName = "tab4", icon = shiny$icon("gears")
         )
       )
     ),
@@ -45,7 +45,7 @@ ui <- function() {
       bs4Dash$tabItems(
         bs4Dash$tabItem(tabName = "tab0", shiny$h2("Centralized Statistical Monitoring", class = "text-display")),
         bs4Dash$tabItem(
-          tabName = "tab1",
+          tabName = "tab4",
           bs4Dash$box(
             title = shiny$h2("Configuration Parameters"),
             width = 8, offset = 2,

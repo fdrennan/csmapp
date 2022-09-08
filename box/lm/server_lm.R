@@ -322,7 +322,7 @@ server <- function(id, parentSession, inputData) {
       output$lmModel <- shiny$renderUI({
         shiny$req(inputData)
         card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
-        card_name <- paste0("Flagging Criteria ", card_number)
+        card_name <- paste("Flag", card_number)
         data <- inputData()
         PARAMCD <- data[[1]]$PARAMCD
         analysis <- data[[1]]$analysis
@@ -331,39 +331,30 @@ server <- function(id, parentSession, inputData) {
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
-            shiny$div(
-              class = "text-center",
-              shiny$div(class = "text-right", bs4Dash$actionButton(
-                ns("deleteButton"), "",
-                icon = shiny$icon("x")
-              ))
-            )
+            shiny$div(class = "text-right", bs4Dash$actionButton(
+              ns("deleteButton"), "",
+              icon = shiny$icon("x")
+            ))
           },
           shiny$fluidRow(
-            shiny$column(
-              12,
-              shiny$selectInput(
-                ns("flagValue"), "Flag",
-                choices = c(-1, 0, 1), selected = 1
-              )
+            shiny$div(class='d-flex justify-content-around', shiny$selectInput(
+              ns("flagValue"), "Flag",
+              choices = c(-1, 0, 1), selected = 1
             ),
-            shiny$column(
-              12,
-              shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
-                choices = PARAMCD,
-                selected = PARAMCD, multiple = TRUE
-              )
-            ),
+            shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
+                                 choices = PARAMCD,
+                                 selected = PARAMCD, multiple = TRUE
+            )),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
+            shiny$column(
+              12,
+              shiny$h3("Flagging Template"),
+              shiny$uiOutput(ns("flaggingTemplate")),
+              shiny$h3("Verify Flagging Criteria"), shiny$uiOutput(ns("flaggingPreview"))
+            ),
             shiny$column(12, shiny$div(
               class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics")
-            )),
-            shiny$column(
-              6,
-              shiny$h3("Flagging Template"),
-              shiny$uiOutput(ns("flaggingTemplate"))
-            ),
-            shiny$column(6, shiny$h3("Verify Flagging Criteria"), shiny$uiOutput(ns("flaggingPreview")))
+            ))
           )
         )
       })
