@@ -250,13 +250,13 @@ server <- function(id, parentSession, inputData) {
               ),
               shiny$div(id = ns("variables"))
             )
-            
+
             flag_crit <- c(
               "var_1 <- diff_pct > {diff_pct}",
               "var_2 <- p_value < {p_value}",
               "all(var_1, var_2)"
             )
-            
+
             list(
               inputs = inputs,
               flag_crit = paste0(flag_crit, sep = "\n")
@@ -286,7 +286,7 @@ server <- function(id, parentSession, inputData) {
               ),
               shiny$div(id = ns("variables"))
             )
-            
+
             flag_crit <- c(
               "var_1 <- p_value < {p_value}",
               "var_2 <- site_value_cnt > {site_value_cnt}",
@@ -295,7 +295,7 @@ server <- function(id, parentSession, inputData) {
               "var_5 <- diff_pct > {diff_pct}",
               "all(var_1, var_2, var_3, var_4, var_5)"
             )
-            
+
             list(
               inputs = inputs,
               flag_crit = paste0(flag_crit, sep = "\n")
@@ -333,7 +333,7 @@ server <- function(id, parentSession, inputData) {
           footer = {
             shiny$div(
               class = "text-center",
-              shiny$div(class='text-right', bs4Dash$actionButton(
+              shiny$div(class = "text-right", bs4Dash$actionButton(
                 ns("deleteButton"), "",
                 icon = shiny$icon("x")
               ))
@@ -350,16 +350,16 @@ server <- function(id, parentSession, inputData) {
             shiny$column(
               12,
               shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
-                                   choices = PARAMCD,
-                                   selected = PARAMCD, multiple = TRUE
+                choices = PARAMCD,
+                selected = PARAMCD, multiple = TRUE
               )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
             shiny$column(12, shiny$div(
-              class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics"))
-            ),
+              class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics")
+            )),
             shiny$column(
-              6, 
+              6,
               shiny$h3("Flagging Template"),
               shiny$uiOutput(ns("flaggingTemplate"))
             ),
@@ -414,7 +414,6 @@ server <- function(id, parentSession, inputData) {
           height = "130px"
         )
       })
-      
     },
     session = parentSession
   )

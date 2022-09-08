@@ -32,8 +32,8 @@ server <- function(input, output, session) {
       purrr$map(
         unique(metadata$analysis), function(x) {
           bs4Dash::box(
-            title = shiny$h2(toupper(x), class='text-center display-2'), 
-            width = 12, 
+            title = shiny$h2(toupper(x), class = "text-center display-2"),
+            width = 12,
             ui_analysis$ui(x, data)
           )
         }
@@ -52,20 +52,23 @@ server <- function(input, output, session) {
     )
     bs4Dash$updateControlbar("homeControlbar")
   })
-  
+
   shiny$observeEvent(input$updateReview, {
     out <- shiny$reactiveValuesToList(input)
-    storr <- storr::storr_rds('storr')
-    out <- lapply(getOption('analysis_filter'), function(analysisName) {
-      tryCatch({
-        out <- storr$get(paste0(analysisName, '-', sessionId))
-        out$analysis <- analysisName
-        out
-      }, error = function(err) {
-        shiny$showNotification(paste('No data supplied for', analysisName))
-      })
+    storr <- storr::storr_rds("storr")
+    out <- lapply(getOption("analysis_filter"), function(analysisName) {
+      tryCatch(
+        {
+          out <- storr$get(paste0(analysisName, "-", sessionId))
+          out$analysis <- analysisName
+          out
+        },
+        error = function(err) {
+          shiny$showNotification(paste("No data supplied for", analysisName))
+        }
+      )
     })
-    
+
     output$reviewOut <- shiny$renderText({
       out <- purrr$keep(out, ~ length(.) > 1)
       out <- jsonlite$toJSON(out, pretty = TRUE)

@@ -33,16 +33,14 @@ server <- function(id, dataToAnalyze, parentSession, sessionId) {
         )
         server_lm$server(ui_id, parentSession, inputData)
       })
-      
+
       shiny$observeEvent(input$finishSetup, {
         out <- shiny$reactiveValuesToList(input)
-        storr <- storr::storr_rds('storr')
-        storrId <- paste0(id,'-', sessionId)
+        storr <- storr::storr_rds("storr")
+        storrId <- paste0(id, "-", sessionId)
         storr$set(storrId, out)
-        shiny$showNotification(paste('Data stored at', storrId))
+        shiny$showNotification(paste("Data stored at", storrId))
       })
-      
-      
     },
     session = parentSession
   )

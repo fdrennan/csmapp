@@ -10,7 +10,7 @@ ui <- function(id, data) {
       12,
       shiny$div(
         class = "text-right",
-        shiny$div(class='py-3', bs4Dash$actionButton(
+        shiny$div(class = "py-3", bs4Dash$actionButton(
           ns("addButton"),
           "",
           style = "height: 3rem;",
@@ -20,7 +20,7 @@ ui <- function(id, data) {
     ),
     shiny$column(
       12,
-      shiny$div(class='text-right py-3', bs4Dash$actionButton(ns('finishSetup'), "Submit"))
+      shiny$div(class = "text-right py-3", bs4Dash$actionButton(ns("finishSetup"), "Submit"))
     )
   )
 }
