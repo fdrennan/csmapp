@@ -62,10 +62,11 @@ ui <- function() {
             shiny$h4("Dosing Analysis"),
             shiny$numericInput("cutoff_perplanned", "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
           ),
-          bs4Dash$box(background = 'white',
+          bs4Dash$box(
+            background = "white",
             title = shiny$h2("Scoreboard Setup"),
             width = 10,
-            DT$DTOutput("scoreboard", width = '100%')
+            DT$DTOutput("scoreboard", width = "100%")
           )
         ),
         bs4Dash$tabItem(
@@ -75,7 +76,7 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab3",
           shiny$actionButton("updateReview", "Review"),
-          shiny$renderTable("reviewOut")
+          shiny$tableOutput("reviewOut")
         )
       )
     )

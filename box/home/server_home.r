@@ -57,8 +57,9 @@ server <- function(input, output, session) {
     scoreboard <- openxlsx$read.xlsx("Config.xlsx", 3)
     scoreboard_names <- colnames(scoreboard)
     dt <- DT$datatable(scoreboard, options = list(
-      pageLength=50, scrollX='700px'))
-    DT$formatStyle(dt, columns = names(scoreboard_names), color="white")
+      pageLength = 50, scrollX = "700px"
+    ))
+    DT$formatStyle(dt, columns = names(scoreboard_names), color = "white")
   })
 
   shiny$observeEvent(input$updateReview, {
