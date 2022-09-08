@@ -4,7 +4,7 @@ analysis_flagging <- function(analysis, ns, input) {
   box::use(shiny, bs4Dash, dplyr)
   out <- switch(analysis,
     "aei" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("n"), "n",
           min = -Inf, max = Inf, value = 2
@@ -43,7 +43,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "rgv" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("site_pct"), "site_pct",
           min = -Inf, max = Inf, value = 25
@@ -82,7 +82,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "aecnt" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("site_cnt"), "site_cnt",
           min = -Inf, max = Inf, value = 3
@@ -137,7 +137,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "aegap" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("n"), "n",
           min = -Inf, max = Inf, value = 1
@@ -166,7 +166,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "rgm" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("n"), "n",
           min = -Inf, max = Inf, value = 5
@@ -220,7 +220,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "underdose" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("diff_pct"), "diff_pct",
           min = -Inf, max = Inf, value = 10
@@ -244,7 +244,7 @@ analysis_flagging <- function(analysis, ns, input) {
       )
     },
     "vitals" = {
-      inputs <- list(
+      inputs <- shiny$wellPanel(
         shiny$numericInput(
           ns("site_value_cnt"), "site_value_cnt",
           min = -Inf, max = Inf, value = 8
@@ -282,9 +282,6 @@ analysis_flagging <- function(analysis, ns, input) {
         flag_crit = paste0(flag_crit, sep = "\n")
       )
     }
-  )
-  out$inputs <- shiny$fluidRow(
-    lapply(out$inputs, function(x) x)
   )
   out
 }
