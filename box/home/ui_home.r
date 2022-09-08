@@ -1,6 +1,6 @@
 #' @export
 ui <- function() {
-  box::use(shiny)
+  box::use(shiny, DT)
   box::use(bs4Dash)
   box::use(.. / metadata / ui_metadata)
   box::use(.. / devop / ui_devop)
@@ -10,7 +10,7 @@ ui <- function() {
       id = "homeControlbar", collapsed = FALSE,
       shiny$div(
         class = "p-3",
-        if (getOption("development")) NULL else ui_devop(),
+        if (getOption("development")) NULL else ui_devop$ui(),
         ui_metadata$ui()
       )
     ),
@@ -37,7 +37,7 @@ ui <- function() {
           tabName = "tab3", icon = shiny$icon("check")
         ),
         bs4Dash$menuItem(
-          text = "Configuration Parameters",
+          text = "Configuration",
           tabName = "tab4", icon = shiny$icon("gears")
         )
       )
@@ -51,8 +51,8 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab4",
           bs4Dash$box(
-            title = shiny$h2("Configuration Parameters"),
-            width = 8, offset = 2,
+            title = shiny$h2("Configuration"),
+            width = 10,
             shiny$h4("Compare Proportion"),
             shiny$numericInput("T_Zscore", "T_Zscore", min = -Inf, max = Inf, value = 1.68),
             shiny$numericInput("min_n_number_betabinom", "min_n_number_betabinom", min = -Inf, max = Inf, value = 5),
@@ -61,6 +61,11 @@ ui <- function() {
             shiny$selectInput("TukeyOutliers", "TukeyOutliers", choices = c("inner", "output"), selected = "outer"),
             shiny$h4("Dosing Analysis"),
             shiny$numericInput("cutoff_perplanned", "cutoff_perplanned", min = -Inf, max = Inf, value = 80)
+          ),
+          bs4Dash$box(background = 'white',
+            title = shiny$h2("Scoreboard Setup"),
+            width = 10,
+            DT$DTOutput("scoreboard", width = '100%')
           )
         ),
         bs4Dash$tabItem(
@@ -70,7 +75,7 @@ ui <- function() {
         bs4Dash$tabItem(
           tabName = "tab3",
           shiny$actionButton("updateReview", "Review"),
-          shiny$tableOutput("reviewOut")
+          shiny$renderTable("reviewOut")
         )
       )
     )

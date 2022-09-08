@@ -3,12 +3,12 @@ server <- function(input, output, session) {
   box::use(
     .. / metadata / server_metadata, shiny, dplyr, fs, cli,
     glue, purrr, readr, haven, htmlTable, bs4Dash,
-    .. / analysis / server_analysis
+    .. / analysis / server_analysis, DT
   )
-  #
+
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
-  box::use(uuid, storr, jsonlite, stringr, tidyr)
+  box::use(uuid, storr, jsonlite, stringr, tidyr, openxlsx)
   sessionId <- uuid$UUIDgenerate()
 
   ns <- session$ns
@@ -53,6 +53,14 @@ server <- function(input, output, session) {
     bs4Dash$updateControlbar("homeControlbar")
   })
 
+  output$scoreboard <- DT$renderDT({
+    scoreboard <- openxlsx$read.xlsx("Config.xlsx", 3)
+    scoreboard_names <- colnames(scoreboard)
+    dt <- DT$datatable(scoreboard, options = list(
+      pageLength=50, scrollX='700px'))
+    DT$formatStyle(dt, columns = names(scoreboard_names), color="white")
+  })
+
   shiny$observeEvent(input$updateReview, {
     out <- shiny$reactiveValuesToList(input)
     storr <- storr::storr_rds("storr")
@@ -69,7 +77,7 @@ server <- function(input, output, session) {
       )
     })
 
-    output$reviewOut <- shiny$renderTable({
+    flags <- shiny$reactive({
       out <- purrr$keep(out, ~ length(.) > 1)
       #
 
@@ -125,6 +133,12 @@ server <- function(input, output, session) {
             )
         }
       )
+    })
+
+
+    output$reviewOut <- shiny$renderTable({
+      shiny$req(flags())
+      flags()
     })
   })
 }
