@@ -62,7 +62,8 @@ server <- function(input, output, session) {
     })
     
     output$reviewOut <- shiny$renderText({
-      utils::capture.output(out)
+      box::use(jsonlite)
+      out <- jsonlite$toJSON(out, pretty=TRUE)
     })
   })
 }
