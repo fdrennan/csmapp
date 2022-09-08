@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   #
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
-  box::use(uuid, storr)
+  box::use(uuid, storr, jsonlite)
   sessionId <- uuid$UUIDgenerate()
 
   ns <- session$ns
@@ -55,6 +55,7 @@ server <- function(input, output, session) {
     out <- lapply(getOption('analysis_filter'), function(analysisName) {
       tryCatch({
         out <- storr$get(paste0(analysisName, '-', sessionId))
+        out$analysis <- analysisName
         out
       }, error = function(err) {
         shiny$showNotification(paste('No data supplied for', analysisName))
@@ -62,8 +63,9 @@ server <- function(input, output, session) {
     })
     
     output$reviewOut <- shiny$renderText({
-      box::use(jsonlite)
-      out <- jsonlite$toJSON(out, pretty=TRUE)
+      out <- purrr$keep(out, ~ length(.) > 1)
+      out <- jsonlite$toJSON(out, pretty = TRUE)
+      out
     })
   })
 }

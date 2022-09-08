@@ -333,10 +333,10 @@ server <- function(id, parentSession, inputData) {
           footer = {
             shiny$div(
               class = "text-center",
-              bs4Dash$actionButton(
+              shiny$div(class='text-right', bs4Dash$actionButton(
                 ns("deleteButton"), "",
                 icon = shiny$icon("x")
-              )
+              ))
             )
           },
           shiny$fluidRow(
@@ -355,7 +355,9 @@ server <- function(id, parentSession, inputData) {
               )
             ),
             shiny$column(12, shiny$uiOutput(ns("statisticsSetup"))),
-            shiny$column(12, shiny$div(class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics"))),
+            shiny$column(12, shiny$div(
+              class = "text-right", bs4Dash$actionButton(ns("updateStats"), "Verify Statistics"))
+            ),
             shiny$column(
               6, 
               shiny$h3("Flagging Template"),
@@ -413,7 +415,6 @@ server <- function(id, parentSession, inputData) {
         )
       })
       
-      input
     },
     session = parentSession
   )
