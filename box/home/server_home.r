@@ -91,6 +91,7 @@ server <- function(input, output, session) {
       out <- dplyr$select(out, analysis, flag_id, value_name, input_value)
       out <- dplyr$arrange(out, analysis, flag_id, value_name)
       out <- jsonlite$toJSON(out, pretty = TRUE)
+
       out
     })
   })
