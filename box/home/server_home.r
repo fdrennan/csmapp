@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   #
   box::use(.. / analysis / ui_analysis)
   box::use(.. / devop / server_devop)
-  box::use(uuid, storr, jsonlite)
+  box::use(uuid, storr, jsonlite, stringr, tidyr)
   sessionId <- uuid$UUIDgenerate()
 
   ns <- session$ns
@@ -71,6 +71,26 @@ server <- function(input, output, session) {
 
     output$reviewOut <- shiny$renderText({
       out <- purrr$keep(out, ~ length(.) > 1)
+      browser()
+
+      out <- purrr$map_dfr(
+        out, function(x) {
+          x_names <- names(x)
+          values <- unlist(lapply(x, jsonlite$toJSON))
+          value_names <- names(values)
+          data <- dplyr$tibble(
+            input_names = value_names,
+            input_value = values,
+            analysis = x$analysis
+          )
+        }
+      )
+
+
+      out <- tidyr$separate(out, input_names, c("flag_id", "value_name"))
+      out <- dplyr$filter(out, value_name %in% c("flagValue", "flagCode", "statsGroupPARAMCD"))
+      out <- dplyr$select(out, analysis, flag_id, value_name, input_value)
+      out <- dplyr$arrange(out, analysis, flag_id, value_name)
       out <- jsonlite$toJSON(out, pretty = TRUE)
       out
     })
