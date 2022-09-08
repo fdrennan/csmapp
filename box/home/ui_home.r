@@ -23,7 +23,8 @@ ui <- function() {
       bs4Dash$sidebarMenu(
         # flat = FALSE,
         id = "sidebarMenu",
-        bs4Dash$menuItem(icon =shiny::icon("book"),
+        bs4Dash$menuItem(
+          icon = shiny::icon("book"),
           text = "Welcome",
           tabName = "tab0"
         ),
@@ -45,7 +46,7 @@ ui <- function() {
       bs4Dash$tabItems(
         bs4Dash$tabItem(
           tabName = "tab0", shiny$h2("Centralized Statistical Monitoring", class = "text-display"),
-          shiny$includeHTML('./README.html')
+          shiny$includeHTML("./README.html")
         ),
         bs4Dash$tabItem(
           tabName = "tab4",
