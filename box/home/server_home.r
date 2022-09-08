@@ -86,7 +86,6 @@ server <- function(input, output, session) {
         }
       )
 
-
       out <- tidyr$separate(out, input_names, c("flag_id", "value_name"))
       out <- dplyr$filter(out, value_name %in% c("flagValue", "flagCode", "statsGroupPARAMCD"))
       out <- dplyr$select(out, analysis, flag_id, value_name, input_value)
