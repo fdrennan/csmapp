@@ -16,9 +16,9 @@ server <- function(id, parentSession, inputData) {
     shiny, cli, bs4Dash, glue, .. / flagging / utils,
     shinyAce, stringr, styler, dplyr, openxlsx
   )
-  
-  
-  
+
+
+
   shiny$moduleServer(
     id,
     function(input, output, session) {
@@ -30,27 +30,19 @@ server <- function(id, parentSession, inputData) {
         shiny$removeUI(selector = paste0("#", paste0(id, "-lmModel")))
         shiny$removeUI(selector = paste0("#", ns("deleteButton")))
         lapply(
-          ns(names_of_inputs), 
+          ns(names_of_inputs),
           function(x) {
             .subset2(input, "impl")$.values$remove(x)
-            # print(.subset2(input, "impl")$.values$get(x))
           }
         )
-        # lapply(
-        #   c(names_of_inputs, ns(names_of_inputs)), function(x) {
-        #     browser()
-        #     # .subset2(.input, "impl")$.values$values(i)
-        #     remove_shiny_inputs(x, input)
-        #   }
-        # )
       })
 
       output$lmModel <- shiny$renderUI({
         shiny$req(inputData)
         data <- inputData()
-        flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
+        flagging_setup <- openxlsx$read.xlsx(getOption("base_config"), 2)
         analysis <- data[[1]]$analysis
-        id_step <- as.numeric(stringr$str_extract(id, '[0-9]{4}$'))
+        id_step <- as.numeric(stringr$str_extract(id, "[0-9]{4}$"))
         n_flags <- dplyr$n_distinct(flagging_setup$flag)
         flag <- unique(flagging_setup$flag)[as.numeric(id_step)]
         if (is.na(flag)) {
@@ -59,22 +51,23 @@ server <- function(id, parentSession, inputData) {
         } else {
           preconfigured <- TRUE
         }
-        
+
         flag_setup <- dplyr$filter(
-          flagging_setup, 
+          flagging_setup,
           analysis == !!analysis,
-          flag == !!flag 
+          flag == !!flag
         )
-        
-        PARAMCD_file <- strsplit(flag_setup$paramcd[1], ', ', )[[1]]
+
+        PARAMCD_file <- strsplit(flag_setup$paramcd[1], ", ", )[[1]]
         card_name <- paste("Flag", id_step)
-        
+
         PARAMCD_data <- data[[1]]$PARAMCD
-        bs4Dash$bs4Card(status = ifelse(preconfigured, 'primary', 'warning'),
+        bs4Dash$bs4Card(
+          status = ifelse(preconfigured, "primary", "warning"),
           title = shiny$div(
             shiny$h3(card_name),
-            shiny$h5(ifelse(preconfigured, glue$glue("{id_step} / {n_flags}"), 'Custom Flag'))
-          ), 
+            shiny$h5(ifelse(preconfigured, glue$glue("{id_step} / {n_flags}"), "Custom Flag"))
+          ),
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
@@ -91,7 +84,7 @@ server <- function(id, parentSession, inputData) {
               shiny$wellPanel(
                 shiny$selectizeInput(
                   ns("flagValue"), "Flag",
-                  choices = flag, 
+                  choices = flag,
                   selected = flag
                 ),
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",

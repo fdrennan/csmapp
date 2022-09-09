@@ -39,7 +39,7 @@ get_data <- function() {
     dplyr$inner_join(
       datamisc_files,
       {
-        base_config <- getOption('base_config')
+        base_config <- getOption("base_config")
         cli$cli_alert("Reading {base_config} for analysis to filename match.")
         metapaths <- openxlsx$read.xlsx(base_config, 4)[, c("analysis", "filename")]
       },

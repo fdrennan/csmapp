@@ -75,8 +75,9 @@ ui <- function() {
         ),
         bs4Dash$tabItem(
           tabName = "tab3",
-          bs4Dash$box(background = 'white',
-            title = shiny$h2('Flag Review'),
+          bs4Dash$box(
+            background = "white",
+            title = shiny$h2("Flag Review"),
             width = 10,
             shiny$actionButton("updateReview", "Review"),
             DT$DTOutput("reviewOut")

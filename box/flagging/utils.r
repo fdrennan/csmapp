@@ -1,30 +1,28 @@
 
 #' @export
 analysis_flagging <- function(analysis, ns, input) {
-  
   box::use(shiny, bs4Dash, dplyr, openxlsx, purrr)
-  
+
   flag <- as.numeric(input$flagValue)
-  flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
+  flagging_setup <- openxlsx$read.xlsx(getOption("base_config"), 2)
   if (!flag %in% flagging_setup$flag) {
     flag <- flagging_setup$flag[[1]]
-    flagging_setup <- 
-      flagging_setup |> 
+    flagging_setup <-
+      flagging_setup |>
       dplyr$mutate(
         cutoff = 0, min = -Inf, max = Inf,
-        step = NA, code = ''
-      ) |> 
+        step = NA, code = ""
+      ) |>
       dplyr$distinct(statistics, cutoff, min, max, step, paramcd, code)
-    
   } else {
     flagging_setup <- dplyr$filter(
-      flagging_setup, 
+      flagging_setup,
       analysis == !!analysis,
       flag == !!flag
     )
   }
 
-  
+
   out <- switch(analysis,
     "aei" = {
       inputs <- purrr$map(
@@ -35,12 +33,12 @@ analysis_flagging <- function(analysis, ns, input) {
             x$statistics,
             min = x$min,
             max = x$max,
-            step = x$step, 
+            step = x$step,
             value = x$cutoff
           )
         }
       )
-      
+
       inputs <- shiny$wellPanel(
         inputs,
         shiny$div(id = ns("variables"))
