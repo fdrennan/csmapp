@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   })
 
   output$scoreboard <- DT$renderDT({
-    scoreboard <- openxlsx$read.xlsx("Config.xlsx", 3)
+    scoreboard <- openxlsx$read.xlsx(getOption('base_config'), 3)
     scoreboard_names <- colnames(scoreboard)
     dt <- DT$datatable(scoreboard, options = list(
       pageLength = 50, scrollX = "700px"

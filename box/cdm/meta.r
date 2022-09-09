@@ -41,7 +41,7 @@ get_data <- function() {
       datamisc_files,
       {
         message("Reading Confix.xlsx for analysis to filename match.")
-        metapaths <- openxlsx$read.xlsx("Config.xlsx", 4)[, c("analysis", "filename")]
+        metapaths <- openxlsx$read.xlsx(getOption('base_config'), 4)[, c("analysis", "filename")]
       },
       by = "filename"
     )

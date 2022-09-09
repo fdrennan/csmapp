@@ -1,5 +1,6 @@
 source("renv/activate.R")
 options(development = TRUE)
+options(base_config = 'Configdev.xlsx') 
 options(cache = getOption("development"))
 options(file_regex = "csm[0-9]{6}[a|b|c]/datamisc$")
 options(datamisc_cache_path = "./datamisc")
