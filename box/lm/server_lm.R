@@ -3,6 +3,7 @@
 #' @export
 server <- function(id, parentSession, inputData) {
   remove_shiny_inputs <- function(id, .input) {
+    shiny$showNotification(id)
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
         .subset2(.input, "impl")$.values$remove(i)
@@ -66,10 +67,12 @@ server <- function(id, parentSession, inputData) {
           id = environment(ns)[["namespace"]],
           width = 12,
           footer = {
-            shiny$div(class = "text-right", bs4Dash$actionButton(
-              ns("deleteButton"), "",
-              icon = shiny$icon("x")
-            ))
+            if (!preconfigured) {
+              shiny$div(class = "text-right", bs4Dash$actionButton(
+                ns("deleteButton"), "",
+                icon = shiny$icon("x")
+              ))
+            }
           },
           shiny$fluidRow(
             shiny$column(
