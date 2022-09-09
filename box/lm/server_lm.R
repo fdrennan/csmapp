@@ -12,7 +12,7 @@ server <- function(id, parentSession, inputData) {
 
   box::use(
     shiny, cli, bs4Dash, glue, .. / flagging / utils,
-    shinyAce, stringr, styler, dplyr
+    shinyAce, stringr, styler, dplyr, openxlsx
   )
   
   
@@ -35,11 +35,22 @@ server <- function(id, parentSession, inputData) {
 
       output$lmModel <- shiny$renderUI({
         shiny$req(inputData)
-        card_number <- as.numeric(stringr$str_sub(id, -4L, -1L))
-        card_name <- paste("Flag", card_number)
         data <- inputData()
-        PARAMCD <- data[[1]]$PARAMCD
+        flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
         analysis <- data[[1]]$analysis
+        id_step <- stringr$str_extract(id, '[0-9]{4}$')
+        flag <- unique(flagging_setup$flag)[as.numeric(id_step)]
+        flag_setup <- dplyr$filter(
+          flagging_setup, 
+          analysis == !!analysis,
+          flag == !!flag 
+        )
+        PARAMCD_file <- strsplit(flag_setup$paramcd[1], ', ', )[[1]]
+        
+        card_name <- paste("Flag", id_step)
+        
+        PARAMCD_data <- data[[1]]$PARAMCD
+        
         bs4Dash$bs4Card(
           title = shiny$h3(card_name),
           id = environment(ns)[["namespace"]],
@@ -56,11 +67,11 @@ server <- function(id, parentSession, inputData) {
               shiny$wellPanel(
                 shiny$selectInput(
                   ns("flagValue"), "Flag",
-                  choices = c(-1, 0, 1), selected = 1
+                  choices = unique(flagging_setup$flag), selected = flag
                 ),
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
-                  choices = PARAMCD,
-                  selected = PARAMCD, multiple = TRUE
+                  choices = PARAMCD_data,
+                  selected = toupper(PARAMCD_file), multiple = TRUE
                 )
               )
             ),

@@ -10,10 +10,9 @@ analysis_flagging <- function(analysis, ns, input) {
     analysis == !!analysis,
     flag == !!flag
   )
-  browser()
+  
   out <- switch(analysis,
     "aei" = {
-      
       inputs <- purrr$map(
         split(flagging_setup, 1:nrow(flagging_setup)),
         function(x) {
@@ -30,41 +29,12 @@ analysis_flagging <- function(analysis, ns, input) {
       
       inputs <- shiny$wellPanel(
         inputs,
-        # shiny$numericInput(
-        #   ns("n"), "n",
-        #   min = -Inf, max = Inf, value = 2
-        # ),
-        # shiny$numericInput(
-        #   ns("r"), "r",
-        #   min = -Inf, max = Inf, value = 2
-        # ),
-        # shiny$numericInput(
-        #   ns("diff_pct"), "diff_pct",
-        #   min = -Inf, max = Inf,
-        #   value = ifelse(input$flagValue == -1, -10, 10)
-        # ),
         shiny$div(id = ns("variables"))
       )
 
-      if (input$flagValue == -1) {
-        flag_crit <- c(
-          "var_1 <- abs(diff_pct)/100*n>{n}",
-          "var_2 <- diff_pct<{diff_pct}",
-          "var_3 <- p_value < 0.05  | r=={r}",
-          "all(var_1 & var_2, var_3);"
-        )
-      } else {
-        flag_crit <- c(
-          "var_1 <- abs(diff_pct)/100*n>{n}",
-          "var_2 <- diff_pct>{diff_pct}",
-          "var_3 <- p_value < 0.05  | r=={r}",
-          "all(var_1 & var_2, var_3);"
-        )
-      }
-
       list(
         inputs = inputs,
-        flag_crit = paste0(flag_crit, sep = "\n")
+        flag_crit = paste0(flagging_setup$code, sep = "\n")
       )
     },
     "rgv" = {
