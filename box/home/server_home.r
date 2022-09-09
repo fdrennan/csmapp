@@ -63,6 +63,7 @@ server <- function(input, output, session) {
   })
 
   shiny$observeEvent(input$updateReview, {
+    browser()
     out <- shiny$reactiveValuesToList(input)
     storr <- storr::storr_rds("storr")
     out <- lapply(getOption("analysis_filter"), function(analysisName) {
@@ -80,7 +81,6 @@ server <- function(input, output, session) {
 
     flags <- shiny$reactive({
       out <- purrr$keep(out, ~ length(.) > 1)
-      #
 
       out <- purrr$map_dfr(
         out, function(x) {

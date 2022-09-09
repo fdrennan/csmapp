@@ -36,10 +36,11 @@ server <- function(id, dataToAnalyze, parentSession, sessionId) {
       })
 
       shiny$observeEvent(input$finishSetup, {
+        # browser()
         out <- shiny$reactiveValuesToList(input)
         storr <- storr::storr_rds("storr")
         storrId <- paste0(id, "-", sessionId)
-        storr$set(storrId, out)
+        storr$set(storrId, out, use_cache = FALSE)
         shiny$showNotification(paste("Data stored at", storrId))
       })
     },
