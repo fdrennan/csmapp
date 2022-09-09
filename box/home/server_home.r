@@ -135,8 +135,8 @@ server <- function(input, output, session) {
         }
       )
     })
-
-
+    
+    
     output$reviewOut <- DT$renderDT({
       shiny$req(flags())
       DT$datatable(flags())

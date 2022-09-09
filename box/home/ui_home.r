@@ -29,16 +29,16 @@ ui <- function() {
           tabName = "tab0"
         ),
         bs4Dash$menuItem(
+          text = "Configuration",
+          tabName = "tab4", icon = shiny$icon("gears")
+        ),
+        bs4Dash$menuItem(
           text = "Flagging Setup",
           tabName = "tab2", icon = shiny$icon("flag")
         ),
         bs4Dash$menuItem(
           text = "Flagging Review",
           tabName = "tab3", icon = shiny$icon("check")
-        ),
-        bs4Dash$menuItem(
-          text = "Configuration",
-          tabName = "tab4", icon = shiny$icon("gears")
         )
       )
     ),
