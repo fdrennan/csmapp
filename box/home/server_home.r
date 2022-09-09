@@ -54,7 +54,7 @@ server <- function(input, output, session) {
   })
 
   output$scoreboard <- DT$renderDT({
-    metapaths <- openxlsx$read.xlsx(base_config, 3)
+    scoreboard <- openxlsx$read.xlsx(getOption('base_config'), 3)
     scoreboard_names <- colnames(scoreboard)
     dt <- DT$datatable(scoreboard, options = list(
       pageLength = 50, scrollX = "700px"
@@ -63,7 +63,6 @@ server <- function(input, output, session) {
   })
 
   shiny$observeEvent(input$updateReview, {
-    browser()
     out <- shiny$reactiveValuesToList(input)
     storr <- storr::storr_rds("storr")
     out <- lapply(getOption("analysis_filter"), function(analysisName) {

@@ -24,7 +24,6 @@ server <- function(id, parentSession, inputData) {
       ns <- session$ns
 
       shiny$observeEvent(input$deleteButton, {
-        # browser()
         names_of_inputs <- names(shiny$reactiveValuesToList(input))
         shiny$removeUI(selector = paste0("#", paste0(id, "-lmModel")))
         shiny$removeUI(selector = paste0("#", ns("deleteButton")))
