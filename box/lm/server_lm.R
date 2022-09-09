@@ -6,6 +6,7 @@ server <- function(id, parentSession, inputData) {
     shiny$showNotification(id)
     invisible(
       lapply(grep(id, names(.input), value = TRUE), function(i) {
+        browser()
         .subset2(.input, "impl")$.values$remove(i)
       })
     )
@@ -24,14 +25,24 @@ server <- function(id, parentSession, inputData) {
       ns <- session$ns
 
       shiny$observeEvent(input$deleteButton, {
+        # browser()
         names_of_inputs <- names(shiny$reactiveValuesToList(input))
         shiny$removeUI(selector = paste0("#", paste0(id, "-lmModel")))
         shiny$removeUI(selector = paste0("#", ns("deleteButton")))
         lapply(
-          c(names_of_inputs, ns(names_of_inputs)), function(x) {
-            remove_shiny_inputs(x, input)
+          ns(names_of_inputs), 
+          function(x) {
+            .subset2(input, "impl")$.values$remove(x)
+            # print(.subset2(input, "impl")$.values$get(x))
           }
         )
+        # lapply(
+        #   c(names_of_inputs, ns(names_of_inputs)), function(x) {
+        #     browser()
+        #     # .subset2(.input, "impl")$.values$values(i)
+        #     remove_shiny_inputs(x, input)
+        #   }
+        # )
       })
 
       output$lmModel <- shiny$renderUI({
