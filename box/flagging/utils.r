@@ -8,12 +8,22 @@ analysis_flagging <- function(analysis, ns, input) {
   flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
   if (!flag %in% flagging_setup$flag) {
     flag <- flagging_setup$flag[[1]]
+    flagging_setup <- 
+      flagging_setup |> 
+      dplyr$mutate(
+        cutoff = 0, min = -Inf, max = Inf,
+        step = NA, code = ''
+      ) |> 
+      dplyr$distinct(statistics, cutoff, min, max, step, paramcd, code)
+    
+  } else {
+    flagging_setup <- dplyr$filter(
+      flagging_setup, 
+      analysis == !!analysis,
+      flag == !!flag
+    )
   }
-  flagging_setup <- dplyr$filter(
-    flagging_setup, 
-    analysis == !!analysis,
-    flag == !!flag
-  )
+
   
   out <- switch(analysis,
     "aei" = {
