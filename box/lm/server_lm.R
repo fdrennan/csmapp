@@ -34,6 +34,7 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$lmModel <- shiny$renderUI({
+        browser()
         shiny$req(inputData)
         data <- inputData()
         flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
@@ -66,9 +67,8 @@ server <- function(id, parentSession, inputData) {
               shiny$wellPanel(
                 shiny$selectizeInput(
                   ns("flagValue"), "Flag",
-                  choices = unique(flagging_setup$flag), 
-                  selected = flag,   options = list(create = TRUE)
-
+                  choices = unique(c(flagging_setup$flag, 2, 3, 4)), 
+                  selected = flag
                 ),
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
                   choices = PARAMCD_data,
