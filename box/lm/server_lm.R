@@ -14,13 +14,13 @@ server <- function(id, parentSession, inputData) {
     shiny, cli, bs4Dash, glue, .. / flagging / utils,
     shinyAce, stringr, styler, dplyr
   )
-
+  
+  
+  
   shiny$moduleServer(
     id,
     function(input, output, session) {
       ns <- session$ns
-
-
 
       shiny$observeEvent(input$deleteButton, {
         names_of_inputs <- names(shiny$reactiveValuesToList(input))

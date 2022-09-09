@@ -1,7 +1,10 @@
 
 #' @export
 analysis_flagging <- function(analysis, ns, input) {
-  box::use(shiny, bs4Dash, dplyr)
+  box::use(shiny, bs4Dash, dplyr, openxlsx)
+  
+  scoreboard <- openxlsx$read.xlsx(getOption('base_config'), 2)
+
   out <- switch(analysis,
     "aei" = {
       inputs <- shiny$wellPanel(

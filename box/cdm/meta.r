@@ -3,7 +3,7 @@ get_data <- function() {
   message("Loading Libraries")
   box::use(
     openxlsx, fs, dplyr, purrr, stringr,
-    lubridate, cli, tictoc, stats
+    lubridate, cli, tictoc, stats, shiny, glue
   )
   file_regex <- "csm[0-9]{6}[a|b|c]/datamisc$"
   base_directory <- "/sassys/cdm/cdmdev/bmn111/ach"
@@ -35,13 +35,13 @@ get_data <- function() {
       filename = fs$path_file(path)
     )
 
-  cli$cli_alert("Attaching config to datamisc files")
   datamisc_files <-
     dplyr$inner_join(
       datamisc_files,
       {
-        message("Reading Confix.xlsx for analysis to filename match.")
-        metapaths <- openxlsx$read.xlsx(getOption('base_config'), 4)[, c("analysis", "filename")]
+        base_config <- getOption('base_config')
+        cli$cli_alert("Reading {base_config} for analysis to filename match.")
+        metapaths <- openxlsx$read.xlsx(base_config, 4)[, c("analysis", "filename")]
       },
       by = "filename"
     )

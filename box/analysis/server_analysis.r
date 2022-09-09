@@ -8,7 +8,8 @@ server <- function(id, dataToAnalyze, parentSession, sessionId) {
     id,
     function(input, output, session) {
       ns <- session$ns
-
+      
+      
       inputData <- shiny$reactive({
         shiny$req(dataToAnalyze)
         data <- purrr$keep(dataToAnalyze, function(x) {
@@ -21,7 +22,7 @@ server <- function(id, dataToAnalyze, parentSession, sessionId) {
         id <- sprintf("%s", i)
         ui_id <- ns(id)
       })
-
+      
       shiny$observeEvent(input$addButton, {
         shiny$req(updateId())
         shiny$req(inputData())
