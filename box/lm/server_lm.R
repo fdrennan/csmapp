@@ -40,7 +40,7 @@ server <- function(id, parentSession, inputData) {
         flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
         analysis <- data[[1]]$analysis
         id_step <- as.numeric(stringr$str_extract(id, '[0-9]{4}$'))
-        
+        n_flags <- dplyr$n_distinct(flagging_setup$flag)
         flag <- unique(flagging_setup$flag)[as.numeric(id_step)]
         if (is.na(flag)) {
           preconfigured <- FALSE
@@ -62,7 +62,7 @@ server <- function(id, parentSession, inputData) {
         bs4Dash$bs4Card(status = ifelse(preconfigured, 'primary', 'warning'),
           title = shiny$div(
             shiny$h3(card_name),
-            shiny$h5(ifelse(preconfigured, '', 'Custom Flag'))
+            shiny$h5(ifelse(preconfigured, glue$glue("{id_step} / {n_flags}"), 'Custom Flag'))
           ), 
           id = environment(ns)[["namespace"]],
           width = 12,
