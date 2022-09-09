@@ -4,6 +4,7 @@ analysis_flagging <- function(analysis, ns, input) {
   
   box::use(shiny, bs4Dash, dplyr, openxlsx, purrr)
   flag <- as.numeric(input$flagValue)
+  # browser()
   flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
   flagging_setup <- dplyr$filter(
     flagging_setup, 

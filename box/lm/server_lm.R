@@ -50,7 +50,6 @@ server <- function(id, parentSession, inputData) {
         card_name <- paste("Flag", id_step)
         
         PARAMCD_data <- data[[1]]$PARAMCD
-        
         bs4Dash$bs4Card(
           title = shiny$h3(card_name),
           id = environment(ns)[["namespace"]],
@@ -65,13 +64,16 @@ server <- function(id, parentSession, inputData) {
             shiny$column(
               12,
               shiny$wellPanel(
-                shiny$selectInput(
+                shiny$selectizeInput(
                   ns("flagValue"), "Flag",
-                  choices = unique(flagging_setup$flag), selected = flag
+                  choices = unique(flagging_setup$flag), 
+                  selected = flag,   options = list(create = TRUE)
+
                 ),
                 shiny$selectizeInput(ns("statsGroupPARAMCD"), "PARAMCD",
                   choices = PARAMCD_data,
-                  selected = toupper(PARAMCD_file), multiple = TRUE
+                  selected = toupper(PARAMCD_file),
+                  multiple = TRUE
                 )
               )
             ),
