@@ -34,7 +34,6 @@ server <- function(id, parentSession, inputData) {
       })
 
       output$lmModel <- shiny$renderUI({
-        browser()
         shiny$req(inputData)
         data <- inputData()
         flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
