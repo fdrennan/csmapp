@@ -1,26 +1,48 @@
 
 #' @export
 analysis_flagging <- function(analysis, ns, input) {
-  box::use(shiny, bs4Dash, dplyr, openxlsx)
   
-  scoreboard <- openxlsx$read.xlsx(getOption('base_config'), 2)
-
+  box::use(shiny, bs4Dash, dplyr, openxlsx, purrr)
+  flag <- as.numeric(input$flagValue)
+  flagging_setup <- openxlsx$read.xlsx(getOption('base_config'), 2)
+  flagging_setup <- dplyr$filter(
+    flagging_setup, 
+    analysis == !!analysis,
+    flag == !!flag
+  )
+  browser()
   out <- switch(analysis,
     "aei" = {
+      
+      inputs <- purrr$map(
+        split(flagging_setup, 1:nrow(flagging_setup)),
+        function(x) {
+          shiny$numericInput(
+            ns(x$statistics),
+            x$statistics,
+            min = x$min,
+            max = x$max,
+            step = x$step, 
+            value = x$cutoff
+          )
+        }
+      )
+      
       inputs <- shiny$wellPanel(
-        shiny$numericInput(
-          ns("n"), "n",
-          min = -Inf, max = Inf, value = 2
-        ),
-        shiny$numericInput(
-          ns("r"), "r",
-          min = -Inf, max = Inf, value = 2
-        ),
-        shiny$numericInput(
-          ns("diff_pct"), "diff_pct",
-          min = -Inf, max = Inf,
-          value = ifelse(input$flagValue == -1, -10, 10)
-        ),
+        inputs,
+        # shiny$numericInput(
+        #   ns("n"), "n",
+        #   min = -Inf, max = Inf, value = 2
+        # ),
+        # shiny$numericInput(
+        #   ns("r"), "r",
+        #   min = -Inf, max = Inf, value = 2
+        # ),
+        # shiny$numericInput(
+        #   ns("diff_pct"), "diff_pct",
+        #   min = -Inf, max = Inf,
+        #   value = ifelse(input$flagValue == -1, -10, 10)
+        # ),
         shiny$div(id = ns("variables"))
       )
 
